@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <menu xmlns:android="http://schemas.android.com/apk/res/android">
+        <item 
+            android:id="@+id/Copy" 
+            android:title="@string/Copy"
+            android:icon="@android:drawable/ic_menu_save"></item>
+        <item 
+            android:id="@+id/Send" 
+            android:title="@string/Send"
+            android:icon="@android:drawable/ic_menu_send">
+            <menu>
+                <item 
+                    android:id="@+id/mail" 
+                    android:title="@string/mail"/>
+                <item 
+                    android:id="@+id/sms" 
+                    android:title="@string/sms"/>
+                <item 
+                    android:id="@+id/share" 
+                    android:title="@string/share"/>
+            </menu>
+        </item>
+    </menu>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:gravity="center_horizontal"
+    android:orientation="vertical"
+    style="?backgroundSumm" >
+
+    <TextView
+        android:id="@+id/rateLbl"
+        style="?summary"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/please_rate"
+        android:textSize="14sp" />
+
+    <RatingBar
+        android:id="@+id/ratingBar"
+        style="@style/scifyRatingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxHeight="50dp"
+        android:minHeight="50dp"
+        android:numStars="5"
+        android:rating="0.0"
+        android:stepSize="1.0" />
+
+    <Button
+        android:id="@+id/submitRatingBtn"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/submit_rating"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/title"
+        style="?summarytitle"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="5dp"
+        android:paddingRight="5dp"
+        android:textSize="26sp" />
+
+    <ScrollView
+        android:id="@+id/scrollView1"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="5" >
+
+        <LinearLayout
+            android:id="@+id/linearLayout1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/textView1"
+                style="?summary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:text="@string/error"
+                android:textSize="20sp" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/linearLayout2"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <ZoomControls
+            android:id="@+id/zoomControls1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <Spinner
+            android:id="@+id/spinner1"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:prompt="@string/topics"
+            android:visibility="invisible"/>
+
+    </LinearLayout>
+
+</LinearLayout>

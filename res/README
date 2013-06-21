@@ -1,0 +1,3 @@
+values/analytics.xml and 
+values-el/analytics.xml 
+require the "trackingId" value to be set properly, with the one you possess.

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+   	<attr name="searchWindow" format="reference" />
+   	<attr name="searchbox" format="reference" />
+   	<attr name="backgroundList" format="reference" />
+   	<attr name="TabWidgetbackground" format="reference" />
+   	<attr name="textview" format="reference" />
+   	<attr name="tabindicator" format="reference" />
+   	<attr name="summarytitle" format="reference" />
+   	<attr name="backgroundSumm" format="reference" />
+   	<attr name="summary" format="reference" />
+   	<attr name="windowTitleBackgroundStyle" format="reference" />
+	<attr name="searchWindowLand" format="reference" />
+</resources>

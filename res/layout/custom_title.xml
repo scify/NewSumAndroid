@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android" android:id="@+id/screen"
+    android:layout_width="fill_parent" android:layout_height="fill_parent"
+    android:orientation="vertical">
+    <TextView android:id="@+id/left_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:shadowRadius="1.1"
+        android:shadowColor="@color/Black"
+        android:textStyle="bold"
+        android:textColor="@color/White"
+        android:text="@string/app_name" />
+
+    <TextView
+        android:id="@+id/scify"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:paddingRight="10dp"
+        android:shadowColor="@color/Black"
+        android:shadowRadius="1.1"
+        android:text="SciFY"
+        android:textColor="@color/White"
+        android:textStyle="bold" />
+
+    <ImageView
+        android:id="@+id/title_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="35dp"
+        android:clickable="true"
+        android:src="@drawable/scify_logo" />
+ 
+</RelativeLayout>

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <CheckedTextView
+        android:id="@+id/checkedTextView1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="2dp"
+ 		android:paddingRight="2dp"
+ 		android:paddingTop="2dp"
+        android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+        android:layout_marginRight="4dp"
+        android:textSize="26dp"
+        android:gravity="center_vertical"
+        android:clickable="true"
+        android:text="@string/all" />
+
+    <ListView
+        android:id="@+id/listView1"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.0" >
+    </ListView>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <Button
+            android:id="@+id/AnnounceOKBtn"
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.0"
+            android:text="@string/ok" />
+
+        <Button
+            android:id="@+id/button2"
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.0"
+            android:text="@string/cancel" />
+
+    </LinearLayout>
+
+</LinearLayout>

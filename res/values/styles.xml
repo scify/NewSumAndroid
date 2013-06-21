@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="scifyRatingBar" parent="@android:style/Widget.RatingBar">
+        <item name="android:progressDrawable">@drawable/ratingstars</item>
+        <item name="android:minHeight">50dip</item>
+        <item name="android:maxHeight">50dip</item>
+    </style>
+    <style name="search_window_os">
+        <item name="android:background">@drawable/searchlayout_os</item>
+        <item name="android:padding">7dp</item>
+    </style>
+    <style name="search_box_os">
+        <item name="android:background">@drawable/searchbox_os</item>
+        <item name="android:textColorHint">@color/Black</item>
+    </style>
+    <style name="background_os">
+        <item name="android:background">@color/Silverlight</item>
+    </style>
+    <style name="tab_widget_background_os">
+        <item name="android:background">@color/Orangeblaze</item>
+    </style>
+    <style name="textview_os">
+        <item name="android:textColor">@color/Black</item>
+    </style>
+    <style name="tabindicator_os">
+        <item name="android:background">@drawable/tab_indicator</item>
+    </style>
+    <style name="summarytitle_os">
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="summarytitle_def">
+        <item name="android:textColor">#FF8C00</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="tabindicator_def">
+        <item name="android:background">@drawable/tab_indicator_def</item>
+    </style>
+    <style name="backgroundSumm_os">
+        <item name="android:background">@color/Silverlight</item>
+    </style>
+    <style name="summary_os">
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+    <style name="apptitle_os">
+        <item name="android:background">@drawable/titleorange</item>
+    </style>
+    <style name="WindowTitleBackground">
+        <item name="android:background">@drawable/titleblack</item>
+    </style>
+    <style name="search_window_def">
+        <item name="android:padding">7dp</item>
+        <item name="android:background">@drawable/searchlayout_def</item>
+    </style>
+    <style name="search_box_def">
+        <item name="android:background">@drawable/searchbox_def</item>
+    </style>
+    <style name="search_window_bl">
+        <item name="android:background">@drawable/searchlayout_bl</item>
+        <item name="android:padding">7dp</item>
+        
+    </style>
+    <style name="search_box_bl">
+        <item name="android:background">@drawable/searchbox_bl</item>
+        <item name="android:textColorHint">@color/Black</item>
+    </style>
+    <style name="background_bl">
+        <item name="android:background">@color/CatskillWhite</item>
+    </style>
+    <style name="tab_widget_background_bl">
+        <item name="android:background">@color/WaikawaGray2</item>
+    </style>
+    <style name="textview_bl">
+        <item name="android:textColor">@color/Black</item>
+    </style>
+    <style name="tabindicator_bl">
+        <item name="android:background">@drawable/tab_indicator_bl</item>
+    </style>
+    <style name="summarytitle_bl">
+        <item name="android:textColor">@android:color/black</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    <style name="backgroundSumm_bl">
+        <item name="android:background">@color/CatskillWhite</item>
+    </style>
+    <style name="summary_bl">
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+    <style name="apptitle_bl">
+        <item name="android:background">@drawable/titleblue</item>
+    </style>
+    <style name="search_window_land_def">
+        <item name="android:background">@drawable/searchlayout_def</item>
+    </style>
+    <style name="search_window_land_os">
+        <item name="android:background">@drawable/searchlayout_os</item>
+    </style>
+    <style name="search_window_land_bl">
+        <item name="android:background">@drawable/searchlayout_bl</item>
+    </style>
+</resources>

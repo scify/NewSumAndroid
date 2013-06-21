@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme" parent="android:Theme">
+        <item name="tabindicator">@style/tabindicator_def</item>
+        <item name="summarytitle">@style/summarytitle_def</item>
+        <item name="android:windowTitleBackgroundStyle">@style/WindowTitleBackground</item>
+        <item name="searchWindow">@style/search_window_def</item>
+        <item name="searchbox">@style/search_box_def</item>
+        <item name="searchWindowLand">@style/search_window_land_def</item>   
+    </style>
+    <style name="Theme.Orangesilver">
+        <item name="searchWindow">@style/search_window_os</item>
+        <item name="searchbox">@style/search_box_os</item>
+        <item name="backgroundList">@style/background_os</item>
+        <item name="TabWidgetbackground">@style/tab_widget_background_os</item>
+        <item name="textview">@style/textview_os</item>
+        <item name="tabindicator">@style/tabindicator_os</item>
+        <item name="summarytitle">@style/summarytitle_os</item>
+        <item name="backgroundSumm">@style/backgroundSumm_os</item>
+        <item name="summary">@style/summary_os</item>
+        <item name="android:windowTitleBackgroundStyle">@style/apptitle_os</item>
+        <item name="searchWindowLand">@style/search_window_land_os</item>
+    </style>
+	<style name="Theme.blue">
+		<item name="searchWindow">@style/search_window_bl</item>
+		<item name="searchbox">@style/search_box_bl</item>
+		<item name="backgroundList">@style/background_bl</item>
+		<item name="TabWidgetbackground">@style/tab_widget_background_bl</item>
+		<item name="textview">@style/textview_bl</item>
+		<item name="tabindicator">@style/tabindicator_bl</item>
+		<item name="summarytitle">@style/summarytitle_bl</item>
+		<item name="backgroundSumm">@style/backgroundSumm_bl</item>
+		<item name="summary">@style/summary_bl</item>
+		<item name="android:windowTitleBackgroundStyle">@style/apptitle_bl</item>
+		<item name="searchWindowLand">@style/search_window_land_bl</item>
+	    
+	</style>
+    
+</resources>

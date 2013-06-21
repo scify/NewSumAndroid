@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <menu xmlns:android="http://schemas.android.com/apk/res/android">
+        <item 
+            android:id="@+id/settings" 
+            android:title="@string/settings"
+            android:icon="@android:drawable/ic_menu_preferences">
+            <menu>
+                <item 
+                    android:id="@+id/Url" 
+                    android:title="@string/url" />
+                <item 
+                    android:id="@+id/Categories"
+                    android:title="@string/categories" />
+                <item 
+                    android:id="@+id/ForgetVisited" 
+                    android:title="@string/forgetVisited" />
+                <item android:id="@+id/themes" android:title="@string/themes"/>
+                <item android:id="@+id/statistics" android:checkable="true" android:title="@string/statistics"/>
+            </menu>
+        </item><item 
+            android:id="@+id/language" 
+            android:title="@string/language"
+            android:icon="@drawable/lang">
+            <menu>
+                <item 
+                    android:id="@+id/L_GR" 
+                    android:title="@string/L_GR" />
+                <item 
+                    android:id="@+id/L_EN" 
+                    android:title="@string/L_EN" />
+            </menu>
+        </item><item 
+            android:id="@+id/help" 
+            android:title="@string/help"
+            android:icon="@android:drawable/ic_menu_help"></item>
+<!--         <item  -->
+<!--             android:id="@+id/donate" -->
+<!--             android:icon="@drawable/donate_new"  -->
+<!--             android:title="@string/donate"></item> -->
+        <item 
+            android:id="@+id/donate"
+            android:icon="@drawable/help_us" 
+            android:title="@string/donate"></item>
+        
+    </menu>
