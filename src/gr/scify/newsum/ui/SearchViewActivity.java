@@ -673,6 +673,7 @@ public class SearchViewActivity extends Activity implements
 
 			@Override
 			public void run() {
+				
 				String[] saTopicIDs = SearchTopicActivity.saTopicIDs;
 				final Spinner spinner = (Spinner) findViewById(R.id.spinner1);
 				ArrayList<Prediction> predictions = gestureLib
@@ -693,16 +694,28 @@ public class SearchViewActivity extends Activity implements
 							}
 
 						} else {
-							if (spinner.getSelectedItemPosition() < saTopicIDs.length - 1) {
-								runOnUiThread(new SpinnerPositionGetter(spinner));
 
+							if (spinner.getSelectedItemPosition() < saTopicIDs.length - 1) { 
+								runOnUiThread(new Runnable() {
+									public void run() {
+										spinner.setSelection(spinner
+												.getSelectedItemPosition() + 1,
+												true);
+									};
+								});
 
 							}
-
 						}
 					}
 				}
+				runOnUiThread(new Runnable() {
 
+					@Override
+					public void run() {
+						pd.dismiss();
+
+					}
+				});				
 			}
 		}).start();
 	}

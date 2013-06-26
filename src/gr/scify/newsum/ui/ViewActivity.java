@@ -601,9 +601,6 @@ public class ViewActivity extends Activity implements
 			@Override
 			public void run() {
 
-//				SharedPreferences settings = getSharedPreferences("urls", 0);
-//				String UserSources = settings.getString("UserLinks", "All");
-
 				final Spinner spinner = (Spinner) findViewById(R.id.spinner1);
 				ArrayList<Prediction> predictions = gestureLib
 						.recognize(gesture);
@@ -623,8 +620,8 @@ public class ViewActivity extends Activity implements
 							}
 
 						} else {
-//							if (spinner.getSelectedItemPosition() < saTopicIDs.length - 1) {
-							if (spinner.getSelectedItemPosition() < saTopicIDsLength - 1) { // Seems working
+
+							if (spinner.getSelectedItemPosition() < saTopicIDsLength - 1) {
 								runOnUiThread(new Runnable() {
 									public void run() {
 										spinner.setSelection(spinner
