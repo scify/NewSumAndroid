@@ -801,7 +801,6 @@ public class NewSumUiActivity extends TabActivity implements Runnable, OnKeyList
 					EasyTracker.getTracker().sendEvent("Search",
 							"Search query put", sSearchQuery, 0l);					
 				}
-
 				// send data to SearchTopicActivity
 				Intent searchIntent = new Intent(view.getContext(),
 						SearchTopicActivity.class);
