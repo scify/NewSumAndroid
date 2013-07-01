@@ -758,15 +758,10 @@ public class NewSumUiActivity extends TabActivity implements Runnable, OnKeyList
 		if ((event.getAction() == KeyEvent.ACTION_DOWN)
 				&& (keyCode == KeyEvent.KEYCODE_ENTER)) {
 			// show progress dialog on search entry
-
-
-			InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-			imm.hideSoftInputFromWindow(keyw.getWindowToken(), 0);// close the
-																	// keyboard
-																	// after
-																	// press
-																	// enter
 			showWaitingDialog();
+			InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+			// close the keyboard after user presses enter
+			imm.hideSoftInputFromWindow(keyw.getWindowToken(), 0);
 			// get The text that the user types
 			String sSearchQuery = keyw.getText().toString();
 			// get the user settings for urls
@@ -802,10 +797,10 @@ public class NewSumUiActivity extends TabActivity implements Runnable, OnKeyList
 				return false;
 			} else {
 				// track the successful search entries
-				EasyTracker.getTracker().sendEvent("Search",
-						"Search query put", sSearchQuery, 0l);
-
-				closeWaitingDialog();
+				if (getAnalyticsPref()) {
+					EasyTracker.getTracker().sendEvent("Search",
+							"Search query put", sSearchQuery, 0l);					
+				}
 
 				// send data to SearchTopicActivity
 				Intent searchIntent = new Intent(view.getContext(),
@@ -813,10 +808,10 @@ public class NewSumUiActivity extends TabActivity implements Runnable, OnKeyList
 
 				Bundle outgoing = new Bundle();
 				// send IDs to string
-				// outgoing.putString("Topic_IDs", sSearchResults);
 				outgoing.putParcelableArray("SearchTopics", sSearchResults);
 				searchIntent.putExtras(outgoing);
-
+				// close the dialog
+				closeWaitingDialog();
 				// starts the activity after the search of the
 				// keyword
 				startActivityForResult(searchIntent, 0);

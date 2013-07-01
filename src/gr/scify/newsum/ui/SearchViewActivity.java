@@ -104,9 +104,12 @@ public class SearchViewActivity extends Activity implements
 	protected static String pText;
 	protected static String sSeparator = NewSumServiceClient.getFirstLevelSeparator();
 	protected static String sSentenceSeparator = NewSumServiceClient.getSecondLevelSeparator();
+	// for setting each Client a Unique ID
+	private static final String UID_PREFS_NAME = "UID_Key_Storage";	
 	// google analytics
 	private static final String SHARING_ACTION = "Sharing"; 
 	private static final String VIEW_SUMMARY_ACTION = "View Summary";
+	private static final String SWIPING_ACTION = "User Swipe";	
 	private static final String GA_ENABLED = NewSumUiActivity.GA_ENABLED;
 
 	protected ProgressDialog pd = null;
@@ -331,8 +334,7 @@ public class SearchViewActivity extends Activity implements
 				String UserSources = settings.getString("UserLinks", "All");
 				String[] Summary = NewSumServiceClient.getSummary(
 						saTopicIDs[arg2], UserSources);
-				if (Summary.length == 0) { // TODO APPLICATION HANGS, DOES NOT
-											// WORK. Updated: CHECK
+				if (Summary.length == 0) { // WORK. Updated: CHECK
 					// Close waiting dialog
 					closeWaitingDialog();
 					
@@ -414,7 +416,7 @@ public class SearchViewActivity extends Activity implements
 
 					@Override
 					public String getName() {
-						return "summary";
+						return "sid";
 					}
 				};
 
@@ -430,9 +432,24 @@ public class SearchViewActivity extends Activity implements
 						return "rating";
 					}
 				};
+				// added User ID
+				NameValuePair nvUserID = new NameValuePair() {
 
+					@Override
+					public String getValue() {
+						SharedPreferences idSettings = getSharedPreferences(UID_PREFS_NAME, Context.MODE_PRIVATE);
+						String sUID = idSettings.getString("UID", "");
+						return sUID;
+					}
+
+					@Override
+					public String getName() {
+						return "userID";
+					}				
+				};		
 				alParams.add(nvSummary);
 				alParams.add(nvRating);
+				alParams.add(nvUserID);				
 
 				boolean bSuccess = false;
 				try {
@@ -680,6 +697,10 @@ public class SearchViewActivity extends Activity implements
 						.recognize(gesture);
 				for (Prediction prediction : predictions) {
 					if (prediction.score > 1.0) {
+						// track the swipe Action on searched topic
+						if (getAnalyticsPref()) {
+							EasyTracker.getTracker().sendEvent(SWIPING_ACTION, "Search View", "", 0l);
+						}						
 						if (prediction.name.contains("right")) {
 							if (spinner.getSelectedItemPosition() > 0) {
 								runOnUiThread(new Runnable() {

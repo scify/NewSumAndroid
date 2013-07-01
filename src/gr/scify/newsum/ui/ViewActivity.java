@@ -118,6 +118,7 @@ public class ViewActivity extends Activity implements
 	// for google analytics
 	private static final String SHARING_ACTION = "Sharing";
 	private static final String VIEW_SUMMARY_ACTION = "View Summary";
+	private static final String SWIPING_ACTION = "User Swipe";
 	private static final String GA_ENABLED = NewSumUiActivity.GA_ENABLED;
 	// for setting each Client a Unique ID
 	private static final String UID_PREFS_NAME = "UID_Key_Storage";
@@ -284,8 +285,8 @@ public class ViewActivity extends Activity implements
 					}
 
 					@Override
-					public String getName() { // TODO fix
-						return "summary";
+					public String getName() {
+						return "sid";
 					}
 				};
 
@@ -606,6 +607,10 @@ public class ViewActivity extends Activity implements
 						.recognize(gesture);
 				for (Prediction prediction : predictions) {
 					if (prediction.score > 1.0) {
+						// track the swipe Action per category
+						if (getAnalyticsPref()) {
+							EasyTracker.getTracker().sendEvent(SWIPING_ACTION, "Normal View", Category, 0l);
+						}	
 						if (prediction.name.contains("right")) {
 							if (spinner.getSelectedItemPosition() > 0) {
 								runOnUiThread(new Runnable() {
