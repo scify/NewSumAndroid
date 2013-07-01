@@ -12,9 +12,9 @@
                 <item 
                     android:id="@+id/mail" 
                     android:title="@string/mail"/>
-                <item 
-                    android:id="@+id/sms" 
-                    android:title="@string/sms"/>
+<!--                 <item  -->
+<!--                     android:id="@+id/sms"  -->
+<!--                     android:title="@string/sms"/> -->
                 <item 
                     android:id="@+id/share" 
                     android:title="@string/share"/>
