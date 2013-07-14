@@ -128,7 +128,7 @@ public class NewSumServiceClient {
 				if (saRes.length != 0) {
 					ArrayList<String> lsRes = new ArrayList<String>(Arrays.asList(saRes));
 					// 	Check for custom_category
-					String sCatToAdd = NewSumUiActivity.getAppContext().getResources().getString(
+					String sCatToAdd = NewSumUiActivity.getAppContext(null).getResources().getString(
 							R.string.custom_category);
 					// If it exists
 					if ( sCatToAdd.trim().length() > 0) {
@@ -303,12 +303,12 @@ public class NewSumServiceClient {
 		 */
 		public static TopicInfo[] readTopics(String sUserSources, String sCategory) {
 			// 	Check for custom_category
-			String sCatToAdd = NewSumUiActivity.getAppContext().getResources().getString(
+			String sCatToAdd = NewSumUiActivity.getAppContext(null).getResources().getString(
 				  R.string.custom_category);
 			// If it exists
 			if ( sCatToAdd.trim().length() > 0) {
 				// Get URL and mime from resources
-				String sCatToAddURL = NewSumUiActivity.getAppContext().getResources().getString(
+				String sCatToAddURL = NewSumUiActivity.getAppContext(null).getResources().getString(
 						  R.string.custom_category_url); 
 //				String sCatToAddMime = NewSumUiActivity.getAppContext().getResources().getString(
 //						  R.string.custom_category_mime);

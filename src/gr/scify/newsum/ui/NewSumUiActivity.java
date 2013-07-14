@@ -31,6 +31,7 @@ package gr.scify.newsum.ui;
 import gr.scify.newsum.Setlanguage;
 import gr.scify.newsum.Utils;
 import gr.scify.newsum.structs.TopicInfo;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -38,6 +39,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -76,6 +78,7 @@ import android.widget.TabHost;
 import android.widget.TabWidget;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.Log;
 
@@ -115,10 +118,18 @@ public class NewSumUiActivity extends TabActivity implements Runnable, OnKeyList
 			EasyTracker.getInstance().activityStop(this);
 		}
 	}
-	
-	public static Context getAppContext() {
+
+	public static Context getAppContext(Activity activityOrNull) {
+		// If context is empty
+		if (context == null)
+			// If activity was passed
+			if (activityOrNull != null)
+				// Use application context
+				context = activityOrNull.getApplicationContext();
 		return context;
 	}
+	
+	
     /**
      * 
      * @return the locale that is used by the device
@@ -391,7 +402,7 @@ public class NewSumUiActivity extends TabActivity implements Runnable, OnKeyList
     	AlertDialog.Builder builder = new AlertDialog.Builder(this);
     	builder.setTitle(R.string.themes);
 		// Init theme list
-		final Map<CharSequence,Integer> mThemes = Utils.getThemeMap();
+		final Map<CharSequence,Integer> mThemes = Utils.getThemeMap(this);
 		// For 
 		final CharSequence[] items = new CharSequence[mThemes.keySet().size()];
 		mThemes.keySet().toArray(items);

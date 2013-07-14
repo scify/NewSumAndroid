@@ -84,7 +84,7 @@ public class TopicActivity extends ListActivity implements IVisitedChecker, Runn
 			return lsVisitedTopicIDs;
 		
 		// Read setting
-		SharedPreferences settings = NewSumUiActivity.getAppContext().getSharedPreferences(VISITED_PREF_GROUP, 0);
+		SharedPreferences settings = NewSumUiActivity.getAppContext(null).getSharedPreferences(VISITED_PREF_GROUP, 0);
 	    String sVisitedLinks = settings.getString(VISITED_TOPIC_IDS_PREF_NAME, "");
 	    // Check zero size
 	    if (sVisitedLinks.length() == 0) {
@@ -109,7 +109,7 @@ public class TopicActivity extends ListActivity implements IVisitedChecker, Runn
 		}
 		
 		// Init setting
-		SharedPreferences settings = NewSumUiActivity.getAppContext().getSharedPreferences(VISITED_PREF_GROUP, 0);
+		SharedPreferences settings = NewSumUiActivity.getAppContext(null).getSharedPreferences(VISITED_PREF_GROUP, 0);
 		// Edit state
 		Editor eToChange = settings.edit();
 	    // Update
@@ -125,7 +125,7 @@ public class TopicActivity extends ListActivity implements IVisitedChecker, Runn
 		ArrayList<String> ssCurVisited = new ArrayList<String>(getVisitedTopicIDs());
 		
 		// Init setting
-		SharedPreferences settings = NewSumUiActivity.getAppContext().getSharedPreferences(VISITED_PREF_GROUP, 0);
+		SharedPreferences settings = NewSumUiActivity.getAppContext(null).getSharedPreferences(VISITED_PREF_GROUP, 0);
 		// Check if item is already present
 		if (ssCurVisited.contains(sTopicID))
 			// If so, return

@@ -214,7 +214,8 @@ public class Categories extends Activity{
 	}
 
 	public static List<String> getHiddenCategories(String sLang) {
-		SharedPreferences settings = NewSumUiActivity.getAppContext().getSharedPreferences("tab" + sLang, 0);
+		SharedPreferences settings = NewSumUiActivity.getAppContext(null).getSharedPreferences(
+				"tab" + sLang, 0);
 		
 		List<String> lsToHide = new ArrayList<String>();
 		// 	get the user settings for tabs

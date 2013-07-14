@@ -69,8 +69,8 @@ public class Utils {
 	private static java.util.Map<CharSequence, Integer> mThemesToIDs = null;
 	private static java.util.Map<CharSequence, Integer> mThemesToResourceIDs = null;
 	
-	public static CharSequence getThemeFromThemeID(int iThemeID) {
-		for (Map.Entry<CharSequence, Integer> eCur : getThemeMap().entrySet()) {
+	public static CharSequence getThemeFromThemeID(int iThemeID, Activity activity) {
+		for (Map.Entry<CharSequence, Integer> eCur : getThemeMap(activity).entrySet()) {
 			if (eCur.getValue() == iThemeID)
 				return eCur.getKey();
 		}
@@ -83,10 +83,10 @@ public class Utils {
 		mThemesToResourceIDs = null;
 	}
 
-	public static java.util.Map<CharSequence, Integer> getThemeMap() {
+	public static java.util.Map<CharSequence, Integer> getThemeMap(Activity activity) {
 		if (mThemesToIDs == null) {
 			mThemesToIDs = new java.util.TreeMap<CharSequence, Integer>();
-			Resources rRes = NewSumUiActivity.getAppContext().getResources();
+			Resources rRes = NewSumUiActivity.getAppContext(activity).getResources();
 			mThemesToIDs.put(rRes.getString(R.string.theme_black_name), 0);
 			mThemesToIDs.put(rRes.getString(R.string.theme_orange_name), 1);
 			mThemesToIDs.put(rRes.getString(R.string.theme_blue_name), 2);
@@ -96,10 +96,10 @@ public class Utils {
 		
 	}
 	
-	public static java.util.Map<CharSequence, Integer> getThemesToResourceIDs() {
+	public static java.util.Map<CharSequence, Integer> getThemesToResourceIDs(Activity activity) {
 		if (mThemesToResourceIDs == null) {
 			mThemesToResourceIDs = new java.util.TreeMap<CharSequence, Integer>();
-			Resources rRes = NewSumUiActivity.getAppContext().getResources();
+			Resources rRes = NewSumUiActivity.getAppContext(activity).getResources();
 			mThemesToResourceIDs.put(rRes.getString(R.string.theme_black_name), R.style.Theme);
 			mThemesToResourceIDs.put(rRes.getString(R.string.theme_orange_name), R.style.Theme_Orangesilver);
 			mThemesToResourceIDs.put(rRes.getString(R.string.theme_blue_name), R.style.Theme_blue);
@@ -132,8 +132,8 @@ public class Utils {
 	{
 		try {
 			activity.setTheme(
-				getThemesToResourceIDs().get(
-						getThemeFromThemeID(iTheme)));
+				getThemesToResourceIDs(activity).get(
+						getThemeFromThemeID(iTheme, activity)));
 		}
 		catch (Exception e) {
 			// Could not set theme

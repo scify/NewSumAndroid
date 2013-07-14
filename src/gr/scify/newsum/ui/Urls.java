@@ -154,8 +154,8 @@ public class Urls extends Activity {
 			String sLang = Locale.getDefault().getLanguage();
 			
 			// create default categories for the first time
-			SharedPreferences settings = NewSumUiActivity.getAppContext().getSharedPreferences(URLS_PREFERENCES_TAG + sLang,
-					0);
+			SharedPreferences settings = NewSumUiActivity.getAppContext(null).getSharedPreferences(
+					URLS_PREFERENCES_TAG + sLang, 0);
 			// Get the user hidden URLs
 			String sURLs = settings.getString(HIDDEN_URLS_PREFERENCES_TAG, 
 					"");

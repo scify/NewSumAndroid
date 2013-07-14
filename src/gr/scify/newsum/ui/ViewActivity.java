@@ -126,8 +126,7 @@ public class ViewActivity extends Activity implements
 	protected static String CATEGORY_INTENT_VAR = "category";
 	
 	
-	public static String sCustomCategory = NewSumUiActivity.getAppContext().getResources().getString(
-			  R.string.custom_category);
+	public static String sCustomCategory = "";
 	
 	protected ProgressDialog pd = null;
 
@@ -222,6 +221,11 @@ public class ViewActivity extends Activity implements
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		// Init custom category
+		sCustomCategory = NewSumUiActivity.getAppContext(this).getResources().getString(
+				  R.string.custom_category);		
+		// Always select landscape orientation for big screens (?)
 		if ((getResources().getConfiguration().screenLayout & 
         	    Configuration.SCREENLAYOUT_SIZE_MASK) != 
         	        Configuration.SCREENLAYOUT_SIZE_NORMAL & (getResources().getConfiguration().screenLayout & 
@@ -744,7 +748,7 @@ public class ViewActivity extends Activity implements
 															// initial sources
 			String[] aInitialLabels = sInitialSources.split(sSentenceSeparator);
 			sText += "<br>";
-			sText += NewSumUiActivity.getAppContext().getResources()
+			sText += NewSumUiActivity.getAppContext(null).getResources()
 					.getString(R.string.allSources)
 					+ ": "; // The text to display for all the Sources
 			boolean first = true;
@@ -847,7 +851,7 @@ public class ViewActivity extends Activity implements
 																	// initial sources
 					String[] aInitialLabels = sInitialSources.split(sSentenceSeparator);
 					sText += "<br>";
-					sText += NewSumUiActivity.getAppContext().getResources()
+					sText += NewSumUiActivity.getAppContext(null).getResources()
 							.getString(R.string.allSources)
 							+ ": "; // The text to display for all the Sources
 					boolean first = true;
@@ -865,7 +869,7 @@ public class ViewActivity extends Activity implements
 				}
 				
 				// Append by NewSum string
-				sText += "<p>" + NewSumUiActivity.getAppContext().getResources().getString(
+				sText += "<p>" + NewSumUiActivity.getAppContext(null).getResources().getString(
 						R.string.PoweredBy) + "</p>";
 				return sText;
 			}
@@ -952,16 +956,18 @@ public class ViewActivity extends Activity implements
 						}
 						if (sCustomCategory.trim().length() > 0) {
 							if (Category.equals(sCustomCategory)) {
-								String sCustomCategoryURL = NewSumUiActivity.getAppContext().getResources().getString(
-										  R.string.custom_category_url);
+								Context ctxCur = NewSumUiActivity.getAppContext(
+										ViewActivity.this);
+								String sCustomCategoryURL = ctxCur.getResources().getString(
+										R.string.custom_category_url);
 								// Check if specific element needs to be read
-								String sElementID = NewSumUiActivity.getAppContext().getResources().getString(
+								String sElementID = ctxCur.getResources().getString(
 										  R.string.custom_category_elementId);
 								// If an element needs to be selected
 								if (sElementID.trim().length() > 0) {
 									try {
 										// Check if specific element needs to be read
-										String sViewOriginalPage = NewSumUiActivity.getAppContext().getResources().getString(
+										String sViewOriginalPage = ctxCur.getResources().getString(
 												  R.string.custom_category_visit_source);
 										// Init text by a link to the original page
 										sText="<p><a href='" + sCustomCategoryURL + "'>" + sViewOriginalPage + "</a></p>";
@@ -989,7 +995,7 @@ public class ViewActivity extends Activity implements
 										
 									} catch (IOException e) {
 										// Show unavailable text
-										sText = NewSumUiActivity.getAppContext().getResources().getString(
+										sText = ctxCur.getResources().getString(
 												  R.string.custom_category_unavailable);
 										e.printStackTrace();
 									}
