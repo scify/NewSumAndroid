@@ -362,8 +362,8 @@ public class SearchViewActivity extends Activity implements
 							saTitles[arg2] + ": " + saDates[arg2], 0l);
 				}
 				// Generate summary text
-				sText = ViewActivity.generateSummaryText(Summary);
-				pText = ViewActivity.generatesummarypost(Summary);
+				sText = ViewActivity.generateSummaryText(Summary, SearchViewActivity.this);
+				pText = ViewActivity.generatesummarypost(Summary, SearchViewActivity.this);
 				tx.setText(Html.fromHtml(sText));
 				tx.setMovementMethod(LinkMovementMethod.getInstance());
 				title.setText(saTitles[arg2] + ": " + saDates[arg2]);

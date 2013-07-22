@@ -140,7 +140,7 @@ public class SearchTopicActivity extends Activity {
 		for (int i = 0; i < tiaTopics.length; i++) {
 			saTopicIDs[i] = tiaTopics[i].getID();
 			saTopicTitles[i] = tiaTopics[i].getTitle();
-			saTopicDates[i] = tiaTopics[i].getPrintableDate();
+			saTopicDates[i] = tiaTopics[i].getPrintableDate(NewSumUiActivity.getDefaultLocale());
 		}
 
 		adapter = new TopicAdapter(this, saTopicTitles);

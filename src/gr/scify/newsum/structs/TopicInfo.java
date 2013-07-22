@@ -33,6 +33,7 @@ import gr.scify.newsum.ui.NewSumUiActivity;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -86,9 +87,9 @@ public class TopicInfo implements Parcelable {
 	 * @return A printable representation of the Topic's Date, 
 	 * according to device's default Locale.
 	 */
-	public String getPrintableDate() {
+	public String getPrintableDate(Locale appLocale) {
         // get a short date representation of the device's default locale
-        DateFormat dateFormatter = DateFormat.getDateInstance(DateFormat.SHORT, NewSumUiActivity.lLocale);
+        DateFormat dateFormatter = DateFormat.getDateInstance(DateFormat.SHORT, appLocale);
     
         return dateFormatter.format(this.dLastDate.getTime());
 	}

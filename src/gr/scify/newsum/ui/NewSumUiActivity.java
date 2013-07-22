@@ -91,7 +91,7 @@ public class NewSumUiActivity extends TabActivity implements Runnable, OnKeyList
 	protected static final String LAST_ANNOUNCEMENT_READ_DATE_PREF_KEY = "date";
 	public static final String GA_ENABLED = "google_analytics_enabled";
 	
-	public static Locale lLocale;
+	public Locale lLocale;
 	
 	private static Context context;
 	protected static String[] saCategories;
@@ -107,8 +107,6 @@ public class NewSumUiActivity extends TabActivity implements Runnable, OnKeyList
 			// tracking app launches
 			EasyTracker.getInstance().activityStart(this);
 		}
-		// check user's locale
-		lLocale = this.getDefaultLocale();
 	}
 	
 	@Override
@@ -134,11 +132,7 @@ public class NewSumUiActivity extends TabActivity implements Runnable, OnKeyList
      * 
      * @return the locale that is used by the device
      */
-    public Locale getDefaultLocale() {
-    	// this is the in-app locale (it changes on each language change)
-//    	Locale lRes = getResources().getConfiguration().locale;
-//    	Log.d("Locale : " + lRes);
-    	
+    public static Locale getDefaultLocale() {
     	// get the device's default locale
     	Locale lDef = Locale.getDefault();
     	//    	Log.d("DEF Locale : " + lDef);
@@ -147,6 +141,11 @@ public class NewSumUiActivity extends TabActivity implements Runnable, OnKeyList
     	
     }
 	
+    public static Locale getSelectedLocale(Context resourceContext) {
+    	// this is the in-app locale (it changes on each language change)
+    	return resourceContext.getResources().getConfiguration().locale;
+    }
+    
 	private void initAnalyticsPref() {
 		SharedPreferences gAnalyticsSettings = getSharedPreferences(GA_ENABLED,
 				Context.MODE_PRIVATE);
@@ -179,9 +178,11 @@ public class NewSumUiActivity extends TabActivity implements Runnable, OnKeyList
         
     	// Init context
     	context = this;
+    	// Init selected language
     	SharedPreferences userlang = getSharedPreferences("lang", 0);
     	String newlang = userlang.getString("lang", Locale.getDefault().getLanguage());
         Setlanguage.updateLanguage(getApplicationContext(), newlang);
+        
 
 //    	EasyTracker.getInstance().setContext(context);
     	// Remove http keepAlive bug ( http://android-developers.blogspot.ca/2011/09/androids-http-clients.html )
@@ -196,6 +197,15 @@ public class NewSumUiActivity extends TabActivity implements Runnable, OnKeyList
     	setContentView(R.layout.newsumui);
         getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.custom_title);
         
+    }
+    
+    @Override
+    protected void onResume() {
+    	super.onResume();
+    	
+		// check user's locale
+		lLocale = NewSumUiActivity.getSelectedLocale(this);
+
         ImageView title_image = (ImageView) findViewById(R.id.title_image);
         title_image.setOnClickListener(new OnClickListener(){
 
@@ -206,13 +216,14 @@ public class NewSumUiActivity extends TabActivity implements Runnable, OnKeyList
 			}
         	
         });
-        
-        setDataSource();
+        		
+        // Update data source
+        setDataSource(this);
     	// show progress dialog
         showWaitingDialog();
         
+        // Start loading
 		new Thread(this).start();
-		
     }
     
     protected void updateTopic(Bundle savedInstanceState) {
@@ -260,7 +271,7 @@ public class NewSumUiActivity extends TabActivity implements Runnable, OnKeyList
 	    // Check actual server URL
 		boolean serverAvailable = false;
 		// Make sure we have initialized the data source
-		setDataSource();
+		setDataSource(this);
 
 		try {
 			URL url = new URL(NewSumServiceClient.URL);
@@ -507,9 +518,6 @@ public class NewSumUiActivity extends TabActivity implements Runnable, OnKeyList
 	 * Should be run on the UI Thread.
 	 */
 	protected synchronized void initCategoryTabs() {
-		SharedPreferences userlang = getSharedPreferences("lang", 0);
-    	String newlang = userlang.getString("lang", Locale.getDefault().getLanguage());
-        Setlanguage.updateLanguage(getApplicationContext(), newlang);
 		//add tabs specs
 		Resources res = getResources(); // Resource object to get Drawables
 		final TabHost tabHost = getTabHost();  // The activity TabHost
@@ -531,7 +539,9 @@ public class NewSumUiActivity extends TabActivity implements Runnable, OnKeyList
 		
         // Determine maximum category length
         int iMaxLen = 0;
-        List<String> lsVisibleCategories = Categories.getVisibleCategories(Locale.getDefault().getLanguage());
+        List<String> lsVisibleCategories = Categories.getVisibleCategories(
+        		NewSumUiActivity.getSelectedLocale(this).getLanguage());
+        
         for (String sCurCategory : lsVisibleCategories) {
         	if (sCurCategory.length() > iMaxLen)
         		iMaxLen = sCurCategory.length();
@@ -546,9 +556,6 @@ public class NewSumUiActivity extends TabActivity implements Runnable, OnKeyList
 	        intent.putExtra(ViewActivity.CATEGORY_INTENT_VAR, 
 	        		sCurCategory).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);//this flag is for tab bug
 	        // Using padded text for equal title sizes
-//			TabHost.TabSpec spec = tabHost.newTabSpec(sCurCategory).setIndicator(createIndicatorView(
-//					getPaddedText(sCurCategory,iMaxLen), 
-//					res.getDrawable(R.drawable.ic_tab_my))).setContent(intent);
 			tabHost.addTab(tabHost.newTabSpec(sCurCategory).setIndicator(createIndicatorView(
 					tabHost, getPaddedText(sCurCategory,iMaxLen), 
 					res.getDrawable(R.drawable.tab_indicator))).setContent(intent));	        
@@ -592,8 +599,8 @@ public class NewSumUiActivity extends TabActivity implements Runnable, OnKeyList
 		}
 	}
 		
-	public String setDataSource() {
-        NewSumServiceClient.URL =getResources().getString(R.string.urlSource);
+	public static String setDataSource(Context resourceContext) {
+        NewSumServiceClient.URL = resourceContext.getResources().getString(R.string.urlSource);
         return NewSumServiceClient.URL;
     }
 	
@@ -776,7 +783,7 @@ public class NewSumUiActivity extends TabActivity implements Runnable, OnKeyList
 			// get The text that the user types
 			String sSearchQuery = keyw.getText().toString();
 			// get the user settings for urls
-			String UserSources = Urls.getUserVisibleURLsAsString();
+			String UserSources = Urls.getUserVisibleURLsAsString(this);
 			// Contains The Topics for the search entry
 			TopicInfo[] sSearchResults = NewSumServiceClient
 					.readTopicsByKeyword(sSearchQuery, UserSources);

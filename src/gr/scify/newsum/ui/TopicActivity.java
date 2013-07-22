@@ -52,7 +52,7 @@ import android.widget.ListView;
 
 public class TopicActivity extends ListActivity implements IVisitedChecker, Runnable {
 	
-	public static String Category = "";
+	public String Category = "";
 	static final String VISITED_PREF_GROUP = "Visited";
 	static final String VISITED_TOPIC_IDS_PREF_NAME = "TopicIDs";
 	static final int MAX_VISITED_ENTRIES = 100;
@@ -67,8 +67,35 @@ public class TopicActivity extends ListActivity implements IVisitedChecker, Runn
 	
 	@Override
 	public void onStart() {
-		super.onStart();
+		super.onStart();		
 	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		SharedPreferences userlang = getSharedPreferences("lang", 0);
+    	String newlang = userlang.getString("lang", Locale.getDefault().getLanguage());
+        Setlanguage.updateLanguage(getApplicationContext(), newlang);
+		// get unique ID for this client
+		SharedPreferences idSettings = getSharedPreferences(UID_PREFS_NAME,
+				Context.MODE_PRIVATE);
+		if (!idSettings.contains("UID")) {
+			String sUID = String.valueOf(UUID.randomUUID());
+			idSettings.edit().putString("UID", sUID).commit();
+		}
+		
+		// Get active category
+		Bundle extras = getIntent().getExtras();
+		Category = extras.getString("category");
+		
+		// Show progress dialog
+		showWaitingDialog();
+		
+		// DONE: Run thread
+		Thread tMainCommands = new Thread(this);
+		tMainCommands.start();
+	}
+	
 	@Override
 	public void onStop() {
 		super.onStop();
@@ -180,30 +207,15 @@ public class TopicActivity extends ListActivity implements IVisitedChecker, Runn
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		SharedPreferences userlang = getSharedPreferences("lang", 0);
-    	String newlang = userlang.getString("lang", Locale.getDefault().getLanguage());
-        Setlanguage.updateLanguage(getApplicationContext(), newlang);
-		// get unique ID for this client
-		SharedPreferences idSettings = getSharedPreferences(UID_PREFS_NAME,
-				Context.MODE_PRIVATE);
-		if (!idSettings.contains("UID")) {
-			String sUID = String.valueOf(UUID.randomUUID());
-			idSettings.edit().putString("UID", sUID).commit();
-		}
-		// Get active category
-		Bundle extras = getIntent().getExtras();
-		Category = extras.getString("category");
-		
-		// Show progress dialog
-		showWaitingDialog();
-		
-		// DONE: Run thread
-		Thread tMainCommands = new Thread(this);
-		tMainCommands.start();
 	}
 
-	public static TopicInfo[] getTopics(String sUserSources) {
-		return tiTopics != null ? tiTopics : NewSumServiceClient.readTopics(sUserSources, Category);
+	public static TopicInfo[] getTopics(String sUserSources, String Category,
+			Context resourceContext) {
+		// Make sure data source is restored
+		NewSumUiActivity.setDataSource(resourceContext);
+		// Return topics
+		return tiTopics != null ? tiTopics : NewSumServiceClient.readTopics(sUserSources, Category,
+				resourceContext);
 	}
 
 	private void showWaitingDialog() {
@@ -229,11 +241,11 @@ public class TopicActivity extends ListActivity implements IVisitedChecker, Runn
 	@Override
 	public void run() {
 		
-		String sUserSources = Urls.getUserVisibleURLsAsString();// get the
-																		// user
-																		// Sources
+		
+		String sUserSources = Urls.getUserVisibleURLsAsString(this);// get the user Sources
 		// Use sorted topics // Topics are already sorted from the server
-		tiTopics = NewSumServiceClient.readTopics(sUserSources, Category);
+		tiTopics = NewSumServiceClient.readTopics(sUserSources, Category,
+				this);
 
 		// DONE: Support grayed out (visited) topics
 		adapter = new TopicAdapter(this, tiTopics);

@@ -108,11 +108,11 @@ public class ViewActivity extends Activity implements
 	// private SimpleGestureFilter detector;
 	private GestureLibrary gestureLib;
 	public static String Category = "";
-	protected static String sSentenceSeparator = NewSumServiceClient.getSecondLevelSeparator();
+//	protected String sSentenceSeparator;
 	protected boolean loading = false;
 	protected boolean nothingFound = false;
 	protected int saTopicIDsLength;
-	protected final Context AppContext = this;
+	//protected final Context AppContext = this;
 	protected static String sText;
 	protected static String pText;
 	// for google analytics
@@ -124,6 +124,7 @@ public class ViewActivity extends Activity implements
 	private static final String UID_PREFS_NAME = "UID_Key_Storage";
 	protected static String TOPIC_ID_INTENT_VAR = "topicID";
 	protected static String CATEGORY_INTENT_VAR = "category";
+	protected boolean bShowWaiting = true;
 	
 	
 	public static String sCustomCategory = "";
@@ -131,6 +132,10 @@ public class ViewActivity extends Activity implements
 	protected ProgressDialog pd = null;
 
 	private void showWaitingDialog() {
+		if (!bShowWaiting) {
+			return;
+		}
+		
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
@@ -145,6 +150,10 @@ public class ViewActivity extends Activity implements
 	}
 	
 	private void closeWaitingDialog() {
+		if (!bShowWaiting) {
+			return;
+		}
+		
 		runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
@@ -155,6 +164,40 @@ public class ViewActivity extends Activity implements
 		});
 		
 	}
+	
+	protected void onResume() {
+		super.onResume();
+
+		bShowWaiting = true;
+		
+		// Reconnect to data source
+		NewSumUiActivity.setDataSource(this);
+		
+		// Attach gesture filter
+		initGestures();
+
+		// Init vars
+		nothingFound = false;
+
+		initZoomControls();
+		
+		// Set rating bar visibility
+		initRatingBar();
+		
+		// Update text size
+		updateTextSize();
+				
+		showWaitingDialog();
+		
+		// Run thread to load data
+		new Thread(this).start();
+		
+	}
+	
+	protected void onRestart() {
+		super.onRestart();		
+	}
+
 	
 	protected void initGestures() {
 		GestureOverlayView gestureOverlayView = new GestureOverlayView(this);
@@ -167,7 +210,6 @@ public class ViewActivity extends Activity implements
 		if (!gestureLib.load()) {
 			finish();
 		}		
-		requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 		setContentView(gestureOverlayView);
         getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.custom_title);
         
@@ -182,6 +224,9 @@ public class ViewActivity extends Activity implements
         	
         });
 		
+		// Allow links to be followed into browser
+		final TextView tx = (TextView) findViewById(R.id.textView1);
+		tx.setMovementMethod(LinkMovementMethod.getInstance());
 	}
 
 	protected void showHelpDialog() {
@@ -222,6 +267,8 @@ public class ViewActivity extends Activity implements
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
+		requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
+		
 		// Init custom category
 		sCustomCategory = NewSumUiActivity.getAppContext(this).getResources().getString(
 				  R.string.custom_category);		
@@ -238,28 +285,6 @@ public class ViewActivity extends Activity implements
 		int newTheme = usertheme.getInt("theme", 2);
 	    Utils.onActivityCreateSetTheme(this,newTheme);
 	    
-	    SharedPreferences userlang = getSharedPreferences("lang", 0);
-	    String newlang = userlang.getString("lang", Locale.getDefault().getLanguage());
-	    Setlanguage.updateLanguage(getApplicationContext(), newlang);
-		initAnalytics();
-		
-		// Attach gesture filter
-		initGestures();
-
-		// Init vars
-		nothingFound = false;
-
-		initZoomControls();
-		
-		// Set rating bar visibility
-		initRatingBar();
-		
-		showWaitingDialog();
-		
-		// Run thread to load data
-		new Thread(this).start();
-
-		
 	}
 
 	private void initRatingBar() {
@@ -584,6 +609,12 @@ public class ViewActivity extends Activity implements
 	@Override
 	public void onStart() {
 		super.onStart();
+		
+	    SharedPreferences userlang = getSharedPreferences("lang", 0);
+	    String newlang = userlang.getString("lang", Locale.getDefault().getLanguage());
+	    Setlanguage.updateLanguage(getApplicationContext(), newlang);
+		initAnalytics();
+		
 //		EasyTracker.getInstance().activityStart(this);
 	}
 
@@ -662,7 +693,13 @@ public class ViewActivity extends Activity implements
 	 * @param Summary The Summary to display
 	 * @return A printable html representation of the Summary
 	 */
-	public static String generateSummaryText(String[] Summary) {
+	public static String generateSummaryText(String[] Summary, Context resourceContext) {
+		// Ascertain connection to data source
+		NewSumUiActivity.setDataSource(resourceContext);
+		
+		// Get separator
+		String sSentenceSeparator = NewSumServiceClient.getSecondLevelSeparator();
+		
 		// proceed with the Summary view
 		int counter;
 		counter = Utils.countDiffArticles(Summary);
@@ -767,30 +804,34 @@ public class ViewActivity extends Activity implements
 		return sText;
 	}
 
-	public static String generatesummarypost(String[] Summary) {
+	public static String generatesummarypost(String[] Summary, Context resourceContext) {
+		// Ascertain connection to data source
+		NewSumUiActivity.setDataSource(resourceContext);
+		
+		// Get separator
+		String sSentenceSeparator = NewSumServiceClient.getSecondLevelSeparator();
+
 		// proceed with the Summary view
 				int counter;
 				counter = Utils.countDiffArticles(Summary);
-				String SourceLabel = null; // The label of the Source
 				String[] tmpSen = null;
 				String LastSource = null;
 				String Source = null;
-				String LastLabel = null;
 				String sText = "";
 				
 				// show summary
 				if (counter == 1) {
 					if (Summary.length == 2) {
 						tmpSen = Summary[1].split(sSentenceSeparator);
-						// For backward compatibility
-						if (tmpSen.length > 3)
-							SourceLabel = tmpSen[3];
-						else
-							try {
-								SourceLabel = new URL(tmpSen[2]).getHost();
-							} catch (MalformedURLException e) {
-								SourceLabel = tmpSen[2];
-							}
+//						// For backward compatibility
+//						if (tmpSen.length > 3)
+//							SourceLabel = tmpSen[3];
+//						else
+//							try {
+//								SourceLabel = new URL(tmpSen[2]).getHost();
+//							} catch (MalformedURLException e) {
+//								SourceLabel = tmpSen[2];
+//							}
 						sText += "<p>" + "&bull; " + tmpSen[0] + "<br>" 
 								+ tmpSen[1] + "</br> "
 								+ "</p>";
@@ -800,14 +841,14 @@ public class ViewActivity extends Activity implements
 							sText += "<p>" + "&bull; " + tmpSen[0] + "</p>";
 						}
 						// For backward compatibility
-						if (tmpSen.length > 3)
-							SourceLabel = tmpSen[3];
-						else
-							try {
-								SourceLabel = new URL(tmpSen[2]).getHost();
-							} catch (MalformedURLException e) {
-								SourceLabel = tmpSen[2];
-							}
+//						if (tmpSen.length > 3)
+//							SourceLabel = tmpSen[3];
+//						else
+//							try {
+//								SourceLabel = new URL(tmpSen[2]).getHost();
+//							} catch (MalformedURLException e) {
+//								SourceLabel = tmpSen[2];
+//							}
 						sText += "<br>" + tmpSen[1] + "</br>";
 					}
 				} else {
@@ -815,21 +856,20 @@ public class ViewActivity extends Activity implements
 						tmpSen = Summary[i].split(sSentenceSeparator);
 						// sText += "<p>"+"&bull; "+ tmpSen[0] + "<br>" + tmpSen[1] +
 						// "</br> "+ "</p>";
-						// For backward compatibility
-						if (tmpSen.length > 3)
-							SourceLabel = tmpSen[3];
-						else
-							try {
-								SourceLabel = new URL(tmpSen[2]).getHost();
-							} catch (MalformedURLException e) {
-								SourceLabel = tmpSen[2];
-							}
+//						// For backward compatibility
+//						if (tmpSen.length > 3)
+//							SourceLabel = tmpSen[3];
+//						else
+//							try {
+//								SourceLabel = new URL(tmpSen[2]).getHost();
+//							} catch (MalformedURLException e) {
+//								SourceLabel = tmpSen[2];
+//							}
 						Source = tmpSen[1];
 						// If first source
 						if (LastSource == null) {
 							// Init
 							LastSource = Source;
-							LastLabel = SourceLabel;
 						}
 						// If a new source was found,
 						if (!LastSource.equals(Source)) {
@@ -837,7 +877,6 @@ public class ViewActivity extends Activity implements
 							sText += "<p>" + LastSource + "</br> </p>";
 							// Update last source
 							LastSource = Source;
-							LastLabel = SourceLabel;
 						}
 						sText += "<p>" + "&bull; " + tmpSen[0] + "</p>";
 					}
@@ -879,12 +918,15 @@ public class ViewActivity extends Activity implements
 		// take the String from the TopicActivity
 		Bundle extras = getIntent().getExtras();
 		Category = extras.getString(CATEGORY_INTENT_VAR);
-		
+
+		// Make sure we have updated the data source
+		NewSumUiActivity.setDataSource(this);
+
 		// Get user sources
-		String sUserSources = Urls.getUserVisibleURLsAsString();
+		String sUserSources = Urls.getUserVisibleURLsAsString(ViewActivity.this);
 		
 		// get Topics from TopicActivity (avoid multiple server calls)
-		TopicInfo[] tiTopics = TopicActivity.getTopics(sUserSources);
+		TopicInfo[] tiTopics = TopicActivity.getTopics(sUserSources, Category, this);
 		
 		// Also get Topic Titles, to display to adapter
 		final String[] saTopicTitles = new String[tiTopics.length];
@@ -900,7 +942,7 @@ public class ViewActivity extends Activity implements
 			// update IDs Array
 			saTopicIDs[iCnt] = tiTopics[iCnt].getID();
 			// update Date Array
-			saTopicDates[iCnt] = tiTopics[iCnt].getPrintableDate();
+			saTopicDates[iCnt] = tiTopics[iCnt].getPrintableDate(NewSumUiActivity.getDefaultLocale());
 		}
 		// get the value of the TopicIDs list size (to use in swipe)
 		saTopicIDsLength = saTopicIDs.length;
@@ -946,7 +988,7 @@ public class ViewActivity extends Activity implements
 						rateLbl.setVisibility(View.VISIBLE);
 						scroll.scrollTo(0, 0);
 						
-						String UserSources = Urls.getUserVisibleURLsAsString();
+						String UserSources = Urls.getUserVisibleURLsAsString(ViewActivity.this);
 
 						String[] saTopicIDs = saTopicIDsArg;
 					
@@ -1034,19 +1076,20 @@ public class ViewActivity extends Activity implements
 									return;
 								}
 								// Generate Summary text for normal categories
-								sText = generateSummaryText(Summary);
-								pText = generatesummarypost(Summary);
+								sText = generateSummaryText(Summary, ViewActivity.this);
+								pText = generatesummarypost(Summary, ViewActivity.this);
 							}
-					
+
+						// Update HTML
 						tx.setText(Html.fromHtml(sText));
+						// Allow links to be followed into browser
 						tx.setMovementMethod(LinkMovementMethod.getInstance());
 						// Also Add Date to Topic Title inside Summary
 						title.setText(saTopicTitlesArg[arg2] + " : "
 								+ SaTopicDatesArg[arg2]);
-						float defSize = tx.getTextSize();
-						SharedPreferences usersize = getSharedPreferences("textS", 0);
-						float newSize = usersize.getFloat("size", defSize);
-						tx.setTextSize(TypedValue.COMPLEX_UNIT_PX, newSize);
+						
+						// Update size
+						updateTextSize();
 
 						// Update visited topics
 						TopicActivity.addVisitedTopicID(saTopicIDs[arg2]);
@@ -1084,4 +1127,13 @@ public class ViewActivity extends Activity implements
 		closeWaitingDialog();
 	}
 
+	protected void updateTextSize() {
+		final TextView tx = (TextView) findViewById(R.id.textView1);
+		
+		float defSize = tx.getTextSize();
+		SharedPreferences usersize = ViewActivity.this.getSharedPreferences("textS", 0);
+		float newSize = usersize.getFloat("size", defSize);
+		tx.setTextSize(TypedValue.COMPLEX_UNIT_PX, newSize);
+		
+	}
 }

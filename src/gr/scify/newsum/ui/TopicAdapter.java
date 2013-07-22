@@ -85,7 +85,7 @@ public class TopicAdapter extends BaseAdapter {
         lastDate.setTimeInMillis(new Date().getTime() +
         		2 * (1000 * 60 * 60 * 24));
         // get a short date representation of the device's default locale
-        DateFormat dateFormatter = DateFormat.getDateInstance(DateFormat.SHORT, NewSumUiActivity.lLocale);
+        DateFormat dateFormatter = DateFormat.getDateInstance(DateFormat.SHORT, NewSumUiActivity.getDefaultLocale());
         
         // For every topic
         for (TopicInfo t : tiaTopics) {

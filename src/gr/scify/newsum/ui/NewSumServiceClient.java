@@ -38,11 +38,14 @@ import java.util.LinkedHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+
 //import org.brickred.socialauth.android.Util;
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
+
+import android.content.Context;
 import android.text.Html;
 
 public class NewSumServiceClient {
@@ -301,14 +304,15 @@ public class NewSumServiceClient {
 		 * category according to User's preference.
 		 * @since v1.0
 		 */
-		public static TopicInfo[] readTopics(String sUserSources, String sCategory) {
+		public static TopicInfo[] readTopics(String sUserSources, String sCategory,
+				Context resourceContext) {
 			// 	Check for custom_category
-			String sCatToAdd = NewSumUiActivity.getAppContext(null).getResources().getString(
+			String sCatToAdd = resourceContext.getResources().getString(
 				  R.string.custom_category);
 			// If it exists
 			if ( sCatToAdd.trim().length() > 0) {
 				// Get URL and mime from resources
-				String sCatToAddURL = NewSumUiActivity.getAppContext(null).getResources().getString(
+				String sCatToAddURL = resourceContext.getResources().getString(
 						  R.string.custom_category_url); 
 //				String sCatToAddMime = NewSumUiActivity.getAppContext().getResources().getString(
 //						  R.string.custom_category_mime);

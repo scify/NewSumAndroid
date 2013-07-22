@@ -38,13 +38,16 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -69,40 +72,59 @@ public class Urls extends Activity {
 		hsLinksAndLabels.clear();
 		hsLinksAndLabels = null;
 	}
-	
-	protected static Map<String, String> getLinksAndLabels() {
+
+	protected static Map<String, String> getLinksAndLabels(Context resourceContext) {
+		NewSumUiActivity.setDataSource(resourceContext);
+		
 		if (hsLinksAndLabels == null) {
 			String[] saLinksAndLabels = NewSumServiceClient.getLinkLabels();
-
-			hsLinksAndLabels = NewSumServiceClient.unpackArray(saLinksAndLabels,
+			
+			// DEBUG LINES
+			Log.d("getLinksAndLabels", "" + saLinksAndLabels.length);
+			//////////////
+			
+			try {
+				hsLinksAndLabels = NewSumServiceClient.unpackArray(saLinksAndLabels,
 							NewSumServiceClient.getSecondLevelSeparator());
+			}
+			catch (ArrayIndexOutOfBoundsException e) {
+				String sSize = String.valueOf(saLinksAndLabels.length);
+				StringBuffer sb = new StringBuffer();
+				for (String sCur : saLinksAndLabels) {
+					sb.append(sCur);
+					sb.append("\n");
+				}
+				Log.e("getLinksAndLabels", "Index out of bounds, size " + sSize + " with array: " + sb.toString(), e);
+				// TODO: Bug #2
+				return new TreeMap<String,String>();
+			}
 		}
 		// get User Categories and keep only linksAndLabels that are for these
 		// Categories.
 		return hsLinksAndLabels;
 	}
 
-	protected static List<String> getAllURLs() {
+	protected static List<String> getAllURLs(Context resourceContext) {
 		// Get links and labels
-		Map<String, String> hsLinksAndLabels = getLinksAndLabels();
+		Map<String, String> hsLinksAndLabels = getLinksAndLabels(resourceContext);
 
 		// Keep only URLs (keys)
 		ArrayList<String> lsRes = new ArrayList<String>(hsLinksAndLabels.keySet());
 		return lsRes;
 	}
 
-	protected static List<String> getAllLabels() {
+	protected static List<String> getAllLabels(Context resourceContext) {
 		// Get links and labels
-		Map<String, String> hsLinksAndLabels = getLinksAndLabels();
+		Map<String, String> hsLinksAndLabels = getLinksAndLabels(resourceContext);
 
 		// Keep only URLs (keys)
 		ArrayList<String> lsRes = new ArrayList<String>(hsLinksAndLabels.values());
 		return lsRes;
 	}
 
-	public static String getUserVisibleURLsAsString() {
+	public static String getUserVisibleURLsAsString(Context resourceContext) {
 		// Get VISIBLE URLS
-		List<String> lsURLs = getUserVisibleURLs();
+		List<String> lsURLs = getUserVisibleURLs(resourceContext);
 		StringBuffer sb = new StringBuffer();
 		// For every URL
 		Iterator<String> isURLs = lsURLs.iterator();
@@ -120,11 +142,12 @@ public class Urls extends Activity {
 		return sb.toString();
 	}
 	
-	public static List<String> getUserVisibleURLs() {
+	public static List<String> getUserVisibleURLs(Context resourceContext) {
 		ArrayList<String> lsRes = new ArrayList<String>();
-		List<String> lsHidden = getUserHiddenURLs(); 
+		List<String> lsHidden = getUserHiddenURLs(resourceContext); 
 		// For each visible category url
-		for (Map.Entry<String, String> eCur : getVisibleCategoryLinksAndLabels().entrySet()) {
+		for (Map.Entry<String, String> eCur : getVisibleCategoryLinksAndLabels(
+				resourceContext).entrySet()) {
 			// If it is not hidden
 			if (!lsHidden.contains(eCur.getKey()))
 				// Add to results
@@ -134,11 +157,13 @@ public class Urls extends Activity {
 		return lsRes;
 	}
 	
-	public static List<String> getUserVisibleLabels() {
+	public static List<String> getUserVisibleLabels(Context resourceContext) {
 		ArrayList<String> lsRes = new ArrayList<String>();
-		List<String> lsHiddenURLs = getUserHiddenURLs(); 
+		List<String> lsHiddenURLs = getUserHiddenURLs(
+				resourceContext); 
 		// For each visible category url
-		for (Map.Entry<String, String> eCur : getVisibleCategoryLinksAndLabels().entrySet()) {
+		for (Map.Entry<String, String> eCur : getVisibleCategoryLinksAndLabels(
+				resourceContext).entrySet()) {
 			// If it is not hidden
 			if (!lsHiddenURLs.contains(eCur.getKey()))
 				// Add value to results
@@ -148,13 +173,13 @@ public class Urls extends Activity {
 		return lsRes;
 	}
 	
-	private static List<String> getUserHiddenURLs() {
+	private static List<String> getUserHiddenURLs(Context resourceContext) {
 		if (lsHiddenURLsCollector  == null) {
 			// Restore preferences USING language info
 			String sLang = Locale.getDefault().getLanguage();
 			
 			// create default categories for the first time
-			SharedPreferences settings = NewSumUiActivity.getAppContext(null).getSharedPreferences(
+			SharedPreferences settings = resourceContext.getSharedPreferences(
 					URLS_PREFERENCES_TAG + sLang, 0);
 			// Get the user hidden URLs
 			String sURLs = settings.getString(HIDDEN_URLS_PREFERENCES_TAG, 
@@ -168,24 +193,24 @@ public class Urls extends Activity {
 			else
 				lsUrls = new ArrayList<String>();
 			
-			// Update local veriable
+			// Update local variable
 			lsHiddenURLsCollector = lsUrls;
 		}
 		
 		return lsHiddenURLsCollector;
 	}
 	
-	public static List<String> getVisibleCategoryURLs() {
-		return new ArrayList<String>(getVisibleCategoryLinksAndLabels().keySet());
+	public static List<String> getVisibleCategoryURLs(Context resourceContext) {
+		return new ArrayList<String>(getVisibleCategoryLinksAndLabels(resourceContext).keySet());
 	}
 
-	public static List<String> getVisibleCategoryLabels() {
-		return new ArrayList<String>(getVisibleCategoryLinksAndLabels().values());
+	public static List<String> getVisibleCategoryLabels(Context resourceContext) {
+		return new ArrayList<String>(getVisibleCategoryLinksAndLabels(resourceContext).values());
 	}
 	
-	public static Map<String,String> getVisibleCategoryLinksAndLabels() {
+	public static Map<String,String> getVisibleCategoryLinksAndLabels(Context resourceContext) {
 		  // Get links and labels
-		  Map<String, String> hsLinksAndLabels = getLinksAndLabels();
+		  Map<String, String> hsLinksAndLabels = getLinksAndLabels(resourceContext);
 		  
 		  // Get default language
 		  String sLang = Locale.getDefault().getLanguage();
@@ -233,7 +258,7 @@ public class Urls extends Activity {
 		// Init list view
 		final ListView list = (ListView) findViewById(R.id.listView1);
 		// Get all labels
-		List<String> lsAllLabels = getVisibleCategoryLabels();
+		List<String> lsAllLabels = getVisibleCategoryLabels(this);
 		String[] saLabels= new String[lsAllLabels.size()]; 
 		lsAllLabels.toArray(saLabels);
 		// Create adapter
@@ -243,7 +268,7 @@ public class Urls extends Activity {
 		list.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
 
 		// Get user hidden URLs
-		List<String> lsHiddenURLs = getUserHiddenURLs();
+		List<String> lsHiddenURLs = getUserHiddenURLs(this);
 		
 		// Create a "check all" control
 		final CheckedTextView checkall = (CheckedTextView) findViewById(R.id.checkedTextView1);
@@ -271,14 +296,14 @@ public class Urls extends Activity {
 					lsHiddenURLsArg.clear();
 				else
 					// Add all to list
-					lsHiddenURLsArg.addAll(getAllURLs());
+					lsHiddenURLsArg.addAll(getAllURLs(Urls.this));
 			}		
 		});
 
 		// Init using preferences
 		// For each item of the links and labels set
 		int iCnt = 0;
-		for (Map.Entry<String,String> eLinkAndLabel : getLinksAndLabels().entrySet()) {
+		for (Map.Entry<String,String> eLinkAndLabel : getLinksAndLabels(this).entrySet()) {
 			// (Un)Check accordingly
 			list.setItemChecked(iCnt, !lsHiddenURLsArg.contains(eLinkAndLabel.getKey()));
 			
@@ -295,11 +320,11 @@ public class Urls extends Activity {
 				if (!list.isItemChecked(position)) {
 					list.setItemChecked(position, false);
 					// It should be added to hidden list
-					lsHiddenURLsArg.add(getVisibleCategoryURLs().get(position));
+					lsHiddenURLsArg.add(getVisibleCategoryURLs(Urls.this).get(position));
 				} else {
 					list.setItemChecked(position, true);
 					// else it should be removed
-					lsHiddenURLsArg.remove(getVisibleCategoryURLs().get(position));
+					lsHiddenURLsArg.remove(getVisibleCategoryURLs(Urls.this).get(position));
 				}
 			}
 		});
@@ -309,7 +334,7 @@ public class Urls extends Activity {
 		ok.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View arg0) {
 				// If all is hidden
-				if (getUncheckedLabels().size() == getVisibleCategoryLabels().size()) {
+				if (getUncheckedLabels().size() == getVisibleCategoryLabels(Urls.this).size()) {
 					// warn and do not allow exit
 					Toast.makeText(Urls.this, R.string.select_or_cancel,
 							Toast.LENGTH_LONG).show();
@@ -360,12 +385,12 @@ public class Urls extends Activity {
 
 	protected List<String> getCheckedLabels() {
 		// Get all labels
-		List<String> lsAll = new ArrayList<String>(getVisibleCategoryLabels());
+		List<String> lsAll = new ArrayList<String>(getVisibleCategoryLabels(Urls.this));
 		// Get user hidden urls
-		List<String> lsHidden = getUserHiddenURLs();
+		List<String> lsHidden = getUserHiddenURLs(this);
 		
 		// For every link and label
-		for (Map.Entry<String, String> eCur : getLinksAndLabels().entrySet()) {
+		for (Map.Entry<String, String> eCur : getLinksAndLabels(this).entrySet()) {
 			// If the link is in the hidden ones
 			if (lsHidden.contains(eCur.getKey()))
 				// Remove label
@@ -377,12 +402,12 @@ public class Urls extends Activity {
 
 	protected List<String> getUncheckedLabels() {
 		// Get all labels
-		List<String> lsAll = new ArrayList<String>(getVisibleCategoryLabels());
+		List<String> lsAll = new ArrayList<String>(getVisibleCategoryLabels(Urls.this));
 		// Get user hidden urls
-		List<String> lsHidden = getUserHiddenURLs();
+		List<String> lsHidden = getUserHiddenURLs(this);
 
 		// For every link and label
-		for (Map.Entry<String, String> eCur : getLinksAndLabels().entrySet()) {
+		for (Map.Entry<String, String> eCur : getLinksAndLabels(this).entrySet()) {
 			// If the link is shown
 			if (!lsHidden.contains(eCur.getKey()))
 				// Remove from Unchecked list
