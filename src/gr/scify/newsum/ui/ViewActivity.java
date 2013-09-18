@@ -315,7 +315,7 @@ public class ViewActivity extends Activity implements
 
 					@Override
 					public String getName() {
-						return "sid";
+						return "summary";
 					}
 				};
 

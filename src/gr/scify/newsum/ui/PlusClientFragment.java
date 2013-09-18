@@ -546,7 +546,6 @@ public final class PlusClientFragment extends Fragment
         }
     }
 
-	@Override
 	public void onConnected(Bundle connectionHint) {
         // Successful connection!
         mLastConnectionResult = CONNECTION_RESULT_SUCCESS;
@@ -558,5 +557,11 @@ public final class PlusClientFragment extends Fragment
         if (activity instanceof OnSignedInListener) {
             ((OnSignedInListener) activity).onSignedIn(mPlusClient);
         }
+	}
+
+	@Override
+	public void onConnected() {
+		// TODO Auto-generated method stub
+		
 	}
 }

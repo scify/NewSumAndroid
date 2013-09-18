@@ -29,7 +29,7 @@
 
 package gr.scify.newsum.ui;
 
-//import com.google.android.gms.plus.GooglePlusUtil;
+import com.google.android.gms.plus.GooglePlusUtil;
 
 import android.app.Dialog;
 import android.os.Bundle;
@@ -66,7 +66,7 @@ public final class GooglePlusErrorDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         Bundle args = getArguments();
-        return getErrorDialog(args.getInt(ARG_ERROR_CODE), getActivity(),
+        return GooglePlusUtil.getErrorDialog(args.getInt(ARG_ERROR_CODE), getActivity(),
                 args.getInt(ARG_REQUEST_CODE));
     }
 
