@@ -71,6 +71,11 @@ public class TopicActivity extends ListActivity implements IVisitedChecker, Runn
 	}
 	
 	@Override
+	protected void onRestart() {
+		super.onRestart();
+	}
+	
+	@Override
 	protected void onResume() {
 		super.onResume();
 		SharedPreferences userlang = getSharedPreferences("lang", 0);
