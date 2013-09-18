@@ -33,10 +33,6 @@ import gr.scify.newsum.ui.PlusClientFragment.OnSignedInListener;
 import java.io.InputStream;
 import java.net.URL;
 
-import com.google.android.gms.plus.GooglePlusUtil;
-import com.google.android.gms.plus.PlusClient;
-import com.google.android.gms.plus.PlusShare;
-import com.google.android.gms.plus.model.people.Person;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -45,6 +41,10 @@ import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.google.android.gms.plus.PlusClient;
+import com.google.android.gms.plus.PlusShare;
+import com.google.android.gms.plus.model.people.Person;
 
 public class GooglePlus extends FragmentActivity
 implements View.OnClickListener, OnSignedInListener {
@@ -78,30 +78,31 @@ protected void onCreate(Bundle savedInstanceState) {
 
 @Override
 public void onClick(View view) {
-	final int errorCode = GooglePlusUtil.checkGooglePlusApp(this);
+//	final int errorCode = GooglePlusUtil.checkGooglePlusApp(this);
 	switch(view.getId()) {
-    case R.id.sign_out_button:
-        resetAccountState();
-        mSignInFragment.signOut();
-        break;
-    case R.id.sign_in_button:
-        	mSignInFragment.signIn(REQUEST_CODE_PLUS_CLIENT_FRAGMENT);
-        break;
-    case R.id.gpost:
-        if (errorCode == GooglePlusUtil.SUCCESS) {
-        	Intent shareIntent = new PlusShare.Builder(this)
-            .setType("text/plain")
-            .setText(summaryF)
-            .setContentUrl(Uri.parse("https://developers.google.com/+/"))
-            .getIntent();
-        startActivityForResult(shareIntent, 0);
-        } else {
-            // Prompt the user to install the Google+ app.
-            GooglePlusErrorDialogFragment
-                    .create(errorCode, REQUEST_CODE_RESOLVE_GOOGLE_PLUS_ERROR)
-                    .show(getSupportFragmentManager(), TAG_ERROR_DIALOG_FRAGMENT);
-        }  
-        break;
+	    case R.id.sign_out_button:
+	        resetAccountState();
+	        mSignInFragment.signOut();
+	        break;
+	    case R.id.sign_in_button:
+	        	mSignInFragment.signIn(REQUEST_CODE_PLUS_CLIENT_FRAGMENT);
+	        break;
+	    case R.id.gpost:
+//        if (errorCode == GooglePlusUtil.SUCCESS) {
+	    	Intent shareIntent = new PlusShare.Builder(this)
+	        .setType("text/plain")
+	        .setText(summaryF)
+	        .setContentUrl(Uri.parse("https://developers.google.com/+/"))
+	        .getIntent();
+	
+	    	startActivityForResult(shareIntent, 0);
+//        } else {
+//            // Prompt the user to install the Google+ app.
+//            GooglePlusErrorDialogFragment
+//                    .create(errorCode, REQUEST_CODE_RESOLVE_GOOGLE_PLUS_ERROR)
+//                    .show(getSupportFragmentManager(), TAG_ERROR_DIALOG_FRAGMENT);
+//        }  
+        	break;
         }
 	}
 

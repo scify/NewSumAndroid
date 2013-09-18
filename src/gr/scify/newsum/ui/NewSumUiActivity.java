@@ -110,6 +110,19 @@ public class NewSumUiActivity extends TabActivity implements Runnable, OnKeyList
 	}
 	
 	@Override
+	protected void onRestart() {
+		super.onRestart();
+		
+		// initially google analytics are enabled
+		initAnalyticsPref();
+		// check if user wants analytics
+		if (getAnalyticsPref()) {
+			// tracking app launches
+			EasyTracker.getInstance().activityStart(this);
+		}
+	}
+	
+	@Override
 	public void onStop() {
 		super.onStop();
 		if (getAnalyticsPref()) {
@@ -556,9 +569,17 @@ public class NewSumUiActivity extends TabActivity implements Runnable, OnKeyList
 	        intent.putExtra(ViewActivity.CATEGORY_INTENT_VAR, 
 	        		sCurCategory).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);//this flag is for tab bug
 	        // Using padded text for equal title sizes
-			tabHost.addTab(tabHost.newTabSpec(sCurCategory).setIndicator(createIndicatorView(
-					tabHost, getPaddedText(sCurCategory,iMaxLen), 
-					res.getDrawable(R.drawable.tab_indicator))).setContent(intent));	        
+	        TabHost.TabSpec tsCur = tabHost.newTabSpec(sCurCategory);
+	        String sTitle = getPaddedText(sCurCategory,iMaxLen);
+	        View vCurInd = createIndicatorView(
+					tabHost, sTitle, res.getDrawable(R.drawable.tab_indicator));
+	        tsCur.setIndicator(vCurInd);
+	        tsCur.setContent(intent);
+	        if ((tabHost == null) || (tsCur == null))
+	        	// DEBUG LINES
+	        	Log.d("Null found...");
+	        else
+	        	tabHost.addTab(tsCur);	        
     	}
         
 		// Reset selected tab

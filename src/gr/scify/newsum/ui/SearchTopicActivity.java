@@ -61,10 +61,6 @@ public class SearchTopicActivity extends Activity {
 	private ProgressDialog pd = null;
 	
 	@Override
-	public void onStart() {
-		super.onStart();
-	}
-	@Override
 	public void onStop() {
 		super.onStop();
 	}
@@ -121,6 +117,12 @@ public class SearchTopicActivity extends Activity {
         	
         });
         
+	}
+	
+	@Override
+	protected void onStart() {
+		super.onStart();
+		
 		ListView list = (ListView) findViewById(R.id.search_list);
 		list.setCacheColorHint(0);
 		// Getting the Bundle object that pass from NewSumActivity EditText
@@ -167,7 +169,7 @@ public class SearchTopicActivity extends Activity {
 			}
 
 		});
-		}
 	}
+	
+}
 
-//}
