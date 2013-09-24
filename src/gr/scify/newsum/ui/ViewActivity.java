@@ -303,8 +303,11 @@ public class ViewActivity extends Activity implements
 			public void onClick(View v) {
 				HttpParams params = new BasicHttpParams(); // Basic params
 				HttpClient client = new DefaultHttpClient(params);
+				String sURL = getApplicationContext().getResources().getString(
+						R.string.urlRating);
+				
 				HttpPost post = new HttpPost(
-						"http://scify.iit.demokritos.gr/NewSumWeb/rate.php");
+						sURL);
 				ArrayList<NameValuePair> alParams = new ArrayList<NameValuePair>();
 
 				NameValuePair nvSummary = new NameValuePair() {
@@ -316,7 +319,7 @@ public class ViewActivity extends Activity implements
 
 					@Override
 					public String getName() {
-						return "sid";
+						return "summary";
 					}
 				};
 

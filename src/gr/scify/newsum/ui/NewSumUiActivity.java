@@ -597,6 +597,11 @@ public class NewSumUiActivity extends TabActivity implements Runnable, OnKeyList
 	        }
     	}
         
+        // If the categories are less than the number of the current tab
+        if (iCurrentTab >= iTabCnt)
+        	// revert to first category as current
+        	iCurrentTab = 0;
+        
 		// Reset selected tab
         if (iCurrentTab < 0) 
 	        tabHost.setCurrentTab(0);

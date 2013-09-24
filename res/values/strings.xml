@@ -41,7 +41,7 @@
 	<string name="submit_rating">Submit rating</string>
 	<string name="thankyou_rate">The rating was successful. Thank you!</string>    
 	<string name="fail_rate">The rating failed. Please, try again later.</string>    
-	<string name="urlRating" translatable="false">http://scify.iit.demokritos.gr/NewSumWeb/rate.php</string>
+	<string name="urlRating" translatable="false">http://scify.no-ip.org:21113/NewSumRating/rate.php</string>
 	<string name="shouldReloadSummaries">The news have been updated. You will be redirected to the main page to continue browsing.</string>	
     <string name="allSources">All sources</string>
 <!--     <string name="custom_category"> </string> -->
