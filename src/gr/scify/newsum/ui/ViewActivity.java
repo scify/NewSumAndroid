@@ -130,7 +130,7 @@ public class ViewActivity extends Activity implements
 	public static String sCustomCategory = "";
 	
 	protected ProgressDialog pd = null;
-
+	
 	private void showWaitingDialog() {
 		if (!bShowWaiting) {
 			return;
@@ -164,7 +164,8 @@ public class ViewActivity extends Activity implements
 		});
 		
 	}
-	
+
+
 	protected void onResume() {
 		super.onResume();
 

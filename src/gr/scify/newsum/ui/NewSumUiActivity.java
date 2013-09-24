@@ -90,6 +90,9 @@ public class NewSumUiActivity extends TabActivity implements Runnable, OnKeyList
 	protected static final String LAST_ANNOUNCEMENT_READ_PREF_KEY = "lastAnnouncement";	
 	protected static final String LAST_ANNOUNCEMENT_READ_DATE_PREF_KEY = "date";
 	public static final String GA_ENABLED = "google_analytics_enabled";
+	// State save keys
+	final static protected String SELECTED_TAB_KEY = "SelectedTab";
+	protected static int iCurrentTab = -1; // Current tab, to be used after app restart
 	
 	public Locale lLocale;
 	
@@ -532,7 +535,14 @@ public class NewSumUiActivity extends TabActivity implements Runnable, OnKeyList
 	 */
 	protected synchronized void initCategoryTabs() {
 		//add tabs specs
-		Resources res = getResources(); // Resource object to get Drawables
+		Resources res = null;
+		try {
+			res = getResources(); // Resource object to get Drawables
+		} catch (NullPointerException npe)
+		{
+			return;
+		}
+			
 		final TabHost tabHost = getTabHost();  // The activity TabHost
 		Configuration cfg = res.getConfiguration();
         boolean hor = cfg.orientation == Configuration.ORIENTATION_LANDSCAPE;
@@ -563,11 +573,15 @@ public class NewSumUiActivity extends TabActivity implements Runnable, OnKeyList
         
         
         // Create tab for every topic
+        int iTabCnt = 0;
         for (String sCurCategory : lsVisibleCategories) {
 	        // Create an Intent to launch an Activity for the tab 
 	        Intent intent = new Intent().setClass(NewSumUiActivity.this, TopicActivity.class);
 	        intent.putExtra(ViewActivity.CATEGORY_INTENT_VAR, 
 	        		sCurCategory).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);//this flag is for tab bug
+	        // Add info about tab auto-inc position
+	        intent.putExtra(SELECTED_TAB_KEY, iTabCnt++);
+	        
 	        // Using padded text for equal title sizes
 	        TabHost.TabSpec tsCur = tabHost.newTabSpec(sCurCategory);
 	        String sTitle = getPaddedText(sCurCategory,iMaxLen);
@@ -578,15 +592,34 @@ public class NewSumUiActivity extends TabActivity implements Runnable, OnKeyList
 	        if ((tabHost == null) || (tsCur == null))
 	        	// DEBUG LINES
 	        	Log.d("Null found...");
-	        else
-	        	tabHost.addTab(tsCur);	        
+	        else {
+	        	tabHost.addTab(tsCur);
+	        }
     	}
         
 		// Reset selected tab
-        tabHost.setCurrentTab(0);			
+        if (iCurrentTab < 0) 
+	        tabHost.setCurrentTab(0);
+        else
+        	tabHost.setCurrentTab(iCurrentTab);
         
 	}
+
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		// TODO Auto-generated method stub
+		super.onSaveInstanceState(outState);
+	}
 	
+	@Override
+	protected void onRestoreInstanceState(Bundle state) {
+		// Get current tab value, BEFORE restoring view
+		iCurrentTab = state.getInt(SELECTED_TAB_KEY);
+		
+		// Restore state
+		super.onRestoreInstanceState(state);
+		
+	}
 	
 	private View createIndicatorView(TabHost tabHost, CharSequence label, Drawable icon) {
 
@@ -642,13 +675,16 @@ public class NewSumUiActivity extends TabActivity implements Runnable, OnKeyList
 		}
 		
 		
-		runOnUiThread(new Runnable() {
-			
-			@Override
-			public void run() {
-				initCategoryTabs();
-			}
-		});
+		// Only init tabs, if they are empty
+ 		if ((getTabHost() != null) && (getTabHost().getTabWidget().getTabCount() == 0)) {
+			runOnUiThread(new Runnable() {
+				
+				@Override
+				public void run() {
+					initCategoryTabs();
+				}
+			});
+ 		}
 		
         initKeyboardControls();
 	    
@@ -667,6 +703,7 @@ public class NewSumUiActivity extends TabActivity implements Runnable, OnKeyList
 				checkAndShowAnnouncement();
 			}
 		});
+		
 	}
 	
 	private void initSearchControls() {
@@ -859,4 +896,9 @@ public class NewSumUiActivity extends TabActivity implements Runnable, OnKeyList
 		return false;
 	}
 
+	@Override
+	protected void onPause() {
+		closeWaitingDialog();
+		super.onPause();
+	}
 }

@@ -57,6 +57,7 @@ public class TopicActivity extends ListActivity implements IVisitedChecker, Runn
 	static final String VISITED_TOPIC_IDS_PREF_NAME = "TopicIDs";
 	static final int MAX_VISITED_ENTRIES = 100;
 	private static final String UID_PREFS_NAME = "UID_Key_Storage";
+	protected int iTabNum = -1;
 	
 	private static TopicInfo[] tiTopics;
 	private static List<String> lsVisitedTopicIDs;
@@ -67,7 +68,7 @@ public class TopicActivity extends ListActivity implements IVisitedChecker, Runn
 	
 	@Override
 	public void onStart() {
-		super.onStart();		
+		super.onStart();
 	}
 	
 	@Override
@@ -92,6 +93,12 @@ public class TopicActivity extends ListActivity implements IVisitedChecker, Runn
 		// Get active category
 		Bundle extras = getIntent().getExtras();
 		Category = extras.getString("category");
+		// Read tab number
+		iTabNum = extras.getInt(NewSumUiActivity.SELECTED_TAB_KEY);
+		
+		// Update caller for selected tab
+		NewSumUiActivity.iCurrentTab = this.iTabNum;
+		
 		
 		// Show progress dialog
 		showWaitingDialog();
@@ -211,7 +218,7 @@ public class TopicActivity extends ListActivity implements IVisitedChecker, Runn
 	// call for topicsView/
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+		super.onCreate(savedInstanceState);		
 	}
 
 	public static TopicInfo[] getTopics(String sUserSources, String Category,
@@ -295,4 +302,10 @@ public class TopicActivity extends ListActivity implements IVisitedChecker, Runn
 
 	}
 
+	@Override
+	protected void onPause() {
+		closeWaitingDialog();
+		
+		super.onPause();
 	}
+}

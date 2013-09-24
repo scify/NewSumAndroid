@@ -170,6 +170,12 @@ public class SearchTopicActivity extends Activity {
 
 		});
 	}
-	
+
+	@Override
+	protected void onPause() {
+		closeWaitingDialog();
+		
+		super.onPause();
+	}
 }
 
