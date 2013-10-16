@@ -21,7 +21,10 @@
     <string name="L_EN">English</string>
     <string name="L_GR">Ελληνικά</string>
     <string name="help">Help</string>
-    <string name="urlSource">http://143.233.226.97:60001/NewSumFreeService/NewSumFreeService?wsdl </string>
+    <string name="urlSource">http://newsumserver1.scify.gr:60001/NewSumFreeService/NewSumFreeService?wsdl</string>
+    <string name="urlSOAPSource">http://newsumserver1.scify.gr:60001/NewSumFreeService/NewSumFreeService</string>
+    <string name="urlSource2">http://newsumserver2.scify.gr:60001/NewSumFreeService/NewSumFreeService?wsdl </string>
+<!--     <string name="urlSource2">http://143.233.226.97:60001/NewSumFreeService/NewSumFreeService?wsdl </string> -->
 <!--     <string name="urlSource">http://192.168.2.3:8080/NewSumFreeService/NewSumFreeService?WSDL</string> -->
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>

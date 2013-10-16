@@ -29,7 +29,10 @@
     <string name="select_or_cancel">Δεν έχετε επιλέξει τίποτα, επιλέξτε ή πατήστε Ακύρωση</string>
     <string name="select_one_source">Δεν επιλέξατε πηγή για την κατηγορία:</string>
     <string name="select_many_sources">Δεν επιλέξατε πηγή για τις κατηγορίες:</string>
-    <string name="urlSource">http://143.233.226.97:60002/NewSumFreeService/NewSumFreeService?WSDL</string>
+    <string name="urlSource">http://newsumserver1.scify.gr:60002/NewSumFreeService/NewSumFreeService?wsdl </string>
+    <string name="urlSOAPSource">http://newsumserver1.scify.gr:60002/NewSumFreeService/NewSumFreeService</string>
+    <string name="urlSource2">http://newsumserver2.scify.gr:60002/NewSumFreeService/NewSumFreeService?wsdl </string>
+<!--     <string name="urlSource2">http://143.233.226.97:60001/NewSumFreeService/NewSumFreeService?wsdl </string> -->
 <!--     <string name="urlSource">http://192.168.1.200:8080/NewSumFreeService/NewSumFreeService?WSDL</string> -->
 <!--     <string name="urlSource">http://192.168.4.140:8080/NewSumFreeService/NewSumFreeService?WSDL</string> -->
 <!--     <string name="urlSource">http://192.168.5.182:8080/NewSumFreeService/NewSumFreeService?WSDL</string> -->

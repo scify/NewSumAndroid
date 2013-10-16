@@ -660,6 +660,7 @@ public class NewSumUiActivity extends TabActivity implements Runnable, OnKeyList
 		
 	public static String setDataSource(Context resourceContext) {
         NewSumServiceClient.URL = resourceContext.getResources().getString(R.string.urlSource);
+        NewSumServiceClient.SOAP_ACTION = resourceContext.getResources().getString(R.string.urlSOAPSource);
         return NewSumServiceClient.URL;
     }
 	

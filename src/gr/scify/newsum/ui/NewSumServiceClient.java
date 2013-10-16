@@ -28,8 +28,9 @@
 
 package gr.scify.newsum.ui;
 
-import gr.scify.newsum.Utils;
+import gr.scify.newsum.controllers.CacheController;
 import gr.scify.newsum.structs.TopicInfo;
+import gr.scify.newsum.Utils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,6 +38,7 @@ import java.util.Calendar;
 import java.util.LinkedHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 
 
 //import org.brickred.socialauth.android.Util;
@@ -50,12 +52,12 @@ import android.text.Html;
 
 public class NewSumServiceClient {
 		private static final String NAMESPACE = "http://NewSumFreeService.Server.NewSumServer.scify.org/";
+		public static  String URL = ""; // Set by the resources
 //		public static  String URL = "http://143.233.226.97:28080/NewSumFreeService/NewSumFreeService?WSDL";//changed
-		public static  String URL = "";
-//		public static String URL = "http://192.168.1.200:8080/NewSumFreeService/NewSumFreeService?WSDL";
-//		private static final String SOAP_ACTION = "http://192.168.178.27:8080/NewSumFreeService/NewSumFreeService";
-		private static final String SOAP_ACTION = "http://143.233.226.97:28080/NewSumFreeService/NewSumFreeService";//changed
+		
+		public static String SOAP_ACTION = "";  // Set by the resources
 //		private static final String SOAP_ACTION = "http://192.168.1.200:8080/NewSumFreeService/NewSumFreeService";
+		
 		private static final String READ_TOPICIDS_METHOD = "getTopicIDs";
 		private static final String READ_TOPICS_METHOD = "getTopicTitles";
 		private static final String READ_CATEGORIES_METHOD = "getCategories";
@@ -112,6 +114,12 @@ public class NewSumServiceClient {
 		 * @return The categories that contain the specified user Sources
 		 */
 		public static String[] readCategories(String sUserSources, String URL) {
+			// Try reading from cache
+			String[] saCachedRes = CacheController.<String[]>getFromCache(READ_CATEGORIES_METHOD
+					+ sUserSources);
+			if (saCachedRes != null)
+				return saCachedRes;
+			
 			SoapObject request = new SoapObject(NAMESPACE, READ_CATEGORIES_METHOD);
 			
 			SoapSerializationEnvelope envelope = 
@@ -141,6 +149,12 @@ public class NewSumServiceClient {
 						return (String[]) lsRes.toArray(new String[lsRes.size()]);
 					}
 				}
+				
+				// Update cache
+				CacheController.<String[]>putToCache(READ_CATEGORIES_METHOD
+						+ sUserSources, saRes);
+				
+				// Return result
 				return saRes;
 				
 			} catch (Exception e) {
@@ -227,6 +241,8 @@ public class NewSumServiceClient {
 		 * @since 1.0
 		 */
 		public static TopicInfo[] readTopicsByKeyword(String sKeyword, String sUserSources) {
+			// Currently NOT cached
+			
 			SoapObject request = new SoapObject(NAMESPACE, GET_TOPICS_BY_KEYWORD);
 
 			SoapSerializationEnvelope envelope = 
@@ -327,7 +343,15 @@ public class NewSumServiceClient {
 					// return the Topic
 					return new TopicInfo[] {aTi};
 				}
-			}			
+			}
+			
+			// Try reading from cache
+			TopicInfo[] saCachedRes = CacheController.<TopicInfo[]>getFromCache(READ_TOPICS_METHOD
+					+ sUserSources + sCategory);
+			if (saCachedRes != null)
+				return saCachedRes;
+			
+			// Else use network call
 			SoapObject request = new SoapObject(NAMESPACE, READ_TOPICS_METHOD);//getTopicTitles
 
 			SoapSerializationEnvelope envelope = 
@@ -347,7 +371,14 @@ public class NewSumServiceClient {
 
 				TopicInfo[] tiRes = parseTopicInfo(saRes);
 				// sort topics again, in order to avoid Calendar normalization issues
-				return Utils.sortTopics(tiRes); 
+				tiRes = Utils.sortTopics(tiRes);
+				
+				// Update cache
+				CacheController.<TopicInfo[]>putToCache(READ_TOPICS_METHOD
+						+ sUserSources + sCategory, tiRes);
+				
+				// Return results
+				return tiRes;
 				
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -510,6 +541,12 @@ public class NewSumServiceClient {
 		 * @return The summary for the specified Topic ID
 		 */
 		public static String[] getSummary(String sTopicID, String sUserSources) {
+			// Try reading from cache
+			String[] saCachedRes = CacheController.<String[]>getFromCache(GET_SUMMARY_METHOD
+					+ sTopicID + sUserSources);
+			if (saCachedRes != null)
+				return saCachedRes;
+			
 			String[] saRes = null;
 			SoapObject request = new SoapObject(NAMESPACE, GET_SUMMARY_METHOD);
 
@@ -530,6 +567,11 @@ public class NewSumServiceClient {
 					return new String[0];
 				} else {
 					saRes = sRes.split(getFirstLevelSeparator());
+					
+					// Update cache
+					CacheController.<String[]>putToCache(GET_SUMMARY_METHOD
+							+ sTopicID + sUserSources, saRes);
+					
 					return saRes;
 				}
 			} catch (Exception e) {
@@ -544,6 +586,11 @@ public class NewSumServiceClient {
 		 * separated by {@link #SecondLevelSeparator} inside.
 		 */
 		public static String[] getLinkLabels() {
+			// Try reading from cache
+			String[] saCachedRes = CacheController.<String[]>getFromCache(GET_LINK_LABELS);
+			if (saCachedRes != null)
+				return saCachedRes;
+			
 			SoapObject request = new SoapObject(NAMESPACE, GET_LINK_LABELS);
 
 			SoapSerializationEnvelope envelope = 
@@ -558,6 +605,11 @@ public class NewSumServiceClient {
 				SoapObject resultsRequestSOAP = (SoapObject) envelope.bodyIn;
 				
 				String[] saRes = resultsRequestSOAP.getProperty("return").toString().split(getFirstLevelSeparator());
+				
+				// Update cache
+				CacheController.<String[]>putToCache(GET_LINK_LABELS, saRes);
+				
+				// Return results
 				return saRes;	
 			} catch (Exception e) {
 				e.printStackTrace();

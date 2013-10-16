@@ -28,6 +28,8 @@
 
 package gr.scify.newsum;
 
+import gr.scify.newsum.controllers.CacheController;
+
 import java.util.Locale;
 
 import android.app.Application;
@@ -77,7 +79,11 @@ public class Setlanguage extends Application
    
     ctx.getResources().updateConfiguration(cfg, null);
     
+    // Reset theme maps
     Utils.resetThemeMaps();
+    // Clear cache
+    CacheController.clearCache();
+    
   }
  
  

@@ -58,6 +58,8 @@ public class TopicActivity extends ListActivity implements IVisitedChecker, Runn
 	static final int MAX_VISITED_ENTRIES = 100;
 	private static final String UID_PREFS_NAME = "UID_Key_Storage";
 	protected int iTabNum = -1;
+	private static final String LAST_CLICKED_ITEM_BUNDLE_KEY = "LastClickedItem";
+	protected int iLastClickedTopic = -1;
 	
 	private static TopicInfo[] tiTopics;
 	private static List<String> lsVisitedTopicIDs;
@@ -267,6 +269,7 @@ public class TopicActivity extends ListActivity implements IVisitedChecker, Runn
 		// R.layout.topic_item, NewSumServiceClient.readTopics(Category));
 		// setListAdapter(aaTopic);
 		final TopicAdapter adapterArg = adapter;
+		showWaitingDialog();
 		runOnUiThread(new Runnable() {
 
 			@Override
@@ -280,22 +283,30 @@ public class TopicActivity extends ListActivity implements IVisitedChecker, Runn
 					public void onItemClick(AdapterView<?> parent, View view,
 							int position, long id) {
 						int num = position;
+						// Update last clicked position
+						iLastClickedTopic = position;
 
 						Intent lvIntent = new Intent(view.getContext(),
 								ViewActivity.class);
 						lvIntent.putExtra(ViewActivity.TOPIC_ID_INTENT_VAR, num);
 						lvIntent.putExtra(ViewActivity.CATEGORY_INTENT_VAR, Category);
-						showWaitingDialog();
+//						showWaitingDialog();
 
 						// Update list of visited topics
 //						addVisitedTopicID((String) (adapterArg.getItem(position)));
 
-						closeWaitingDialog();
+//						closeWaitingDialog();
 						startActivityForResult(lvIntent, 0);
 
 					}
 
 				});
+				
+				// Move to last clicked item, if within limits
+				if ((iLastClickedTopic > -1) && (iLastClickedTopic < list.getCount()))
+					setSelection(iLastClickedTopic);
+
+				
 				closeWaitingDialog();
 			}
 		});
@@ -307,5 +318,19 @@ public class TopicActivity extends ListActivity implements IVisitedChecker, Runn
 		closeWaitingDialog();
 		
 		super.onPause();
+	}
+	
+	@Override
+	protected void onRestoreInstanceState(Bundle state) {
+		// Restore last clicked item position
+		iLastClickedTopic = state.getInt(LAST_CLICKED_ITEM_BUNDLE_KEY);
+		super.onRestoreInstanceState(state);
+	}
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		// Save last clicked item position
+		outState.putInt(LAST_CLICKED_ITEM_BUNDLE_KEY, getSelectedItemPosition());
+		super.onSaveInstanceState(outState);
 	}
 }

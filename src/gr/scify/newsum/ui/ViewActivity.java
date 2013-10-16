@@ -30,6 +30,7 @@ package gr.scify.newsum.ui;
 
 import gr.scify.newsum.Setlanguage;
 import gr.scify.newsum.Utils;
+import gr.scify.newsum.controllers.CacheController;
 import gr.scify.newsum.structs.TopicInfo;
 
 import java.io.BufferedWriter;
@@ -124,7 +125,10 @@ public class ViewActivity extends Activity implements
 	private static final String UID_PREFS_NAME = "UID_Key_Storage";
 	protected static String TOPIC_ID_INTENT_VAR = "topicID";
 	protected static String CATEGORY_INTENT_VAR = "category";
+
+	protected static String SELECTED_ITEM_BUNDLE_KEY = "SelectedItem";
 	protected boolean bShowWaiting = true;
+	private int iPrvSelectedItem = -1;
 	
 	
 	public static String sCustomCategory = "";
@@ -165,7 +169,15 @@ public class ViewActivity extends Activity implements
 		
 	}
 
-
+	@Override
+	protected void onPause() {
+		final Spinner spinner = (Spinner) findViewById(R.id.spinner1);
+		
+		// Update current selected index
+		iPrvSelectedItem = spinner.getSelectedItemPosition();  
+		super.onPause();
+	}
+	
 	protected void onResume() {
 		super.onResume();
 
@@ -960,7 +972,17 @@ public class ViewActivity extends Activity implements
 //		final float maxm = (minm + 24);
 
 		// Get active topic
-		final int num = extras.getInt(TOPIC_ID_INTENT_VAR);
+		int iTopicNum;
+		// If we have returned from a pause
+		if (iPrvSelectedItem >= 0)
+			// use previous selection before pause
+			iTopicNum = iPrvSelectedItem;
+		// else
+		else
+			// use selection from topic page
+			iTopicNum = extras.getInt(TOPIC_ID_INTENT_VAR); 
+		final int num = iTopicNum;
+		
 		// create an invisible spinner just to control the summaries of the
 		// category (i will use it later on Swipe)
 		final Spinner spinner = (Spinner) findViewById(R.id.spinner1);
@@ -1000,6 +1022,7 @@ public class ViewActivity extends Activity implements
 						if (getAnalyticsPref()) {
 							EasyTracker.getTracker().sendEvent(VIEW_SUMMARY_ACTION, Category, saTopicTitlesArg[arg2], 0l);
 						}
+						
 						if (sCustomCategory.trim().length() > 0) {
 							if (Category.equals(sCustomCategory)) {
 								Context ctxCur = NewSumUiActivity.getAppContext(
@@ -1067,6 +1090,9 @@ public class ViewActivity extends Activity implements
 											new DialogInterface.OnClickListener() {
 												public void onClick(DialogInterface arg0,
 														int arg1) {
+													// Reset cache
+													CacheController.clearCache();
+													// Restart main activity
 													startActivity(new Intent(
 															getApplicationContext(),
 															NewSumUiActivity.class)
@@ -1139,5 +1165,20 @@ public class ViewActivity extends Activity implements
 		float newSize = usersize.getFloat("size", defSize);
 		tx.setTextSize(TypedValue.COMPLEX_UNIT_PX, newSize);
 		
+	}
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		final Spinner spinner = (Spinner) findViewById(R.id.spinner1);
+		
+		outState.putInt(SELECTED_ITEM_BUNDLE_KEY, spinner.getSelectedItemPosition());
+		super.onSaveInstanceState(outState);
+	}
+	
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		super.onRestoreInstanceState(savedInstanceState);
+		
+		iPrvSelectedItem = savedInstanceState.getInt(SELECTED_ITEM_BUNDLE_KEY);
 	}
 }
